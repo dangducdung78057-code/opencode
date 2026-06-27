@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 字体 -->
+  <link href="https://fonts.googleapis.cn/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 — 莫兰迪·浅薄荷绿 + 暖米 === */
+      --color-primary:              #7fa89a;   /* 薄荷青灰，主色 */
+      --color-primary-soft:         #a8c5b8;   /* 浅薄荷，装饰 */
+      --color-primary-deep:         #5a7a70;   /* 深薄荷，标题/重点 */
+      --color-primary-container:    #dce9e0;   /* 主色容器 */
+      --color-on-primary:           #ffffff;
+      --color-accent:               #c9a87c;   /* 暖金棕，点缀 */
+      --color-accent-soft:          #e8d5b7;   /* 浅金 */
+      --color-rose:                 #c98b8b;   /* 豆沙粉，舞蹈主题 */
+      --color-indigo:               #6b7a8f;   /* 灰蓝，民乐主题 */
+
+      /* === 背景 / 表面 — 暖米色系 === */
+      --color-background:                 #f7f4ee;  /* 米白底色 */
+      --color-surface-container-lowest:   #faf7f1;  /* 最浅 */
+      --color-surface:                    #ffffff;  /* 卡片白 */
+      --color-surface-container:          #efeae0;  /* 输入框/容器 */
+      --color-surface-container-high:     #e5ded0;  /* 较深容器 */
+      --color-surface-container-highest:  #d8cfbe;  /* 最深容器 */
+
+      /* === 文字 === */
+      --color-on-surface:           #3d3a33;   /* 深暖灰主文字 */
+      --color-on-surface-variant:   #7a7568;   /* 次文字 */
+      --color-on-surface-soft:      #a39d8e;   /* 最次文字 */
+
+      /* === 功能色 === */
+      --color-success:  #6b9e7a;
+      --color-error:    #c97b6b;
+      --color-warning:  #d4a85a;
+
+      /* === 边框 === */
+      --color-outline:          #c8c0ad;
+      --color-outline-variant:  #d8d1c0;
+
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.625rem;
+      --radius-lg:   1rem;
+      --radius-xl:   1.5rem;
+      --radius-2xl:  2rem;
+      --radius-full: 9999px;
+
+      /* === 阴影 === */
+      --shadow-card:   0 2px 12px rgba(61,58,51,0.06);
+      --shadow-float:  0 12px 32px rgba(61,58,51,0.08);
+      --shadow-dialog: 0 28px 60px rgba(61,58,51,0.12);
+
+      /* === 字体 === */
+      --font-serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --font-sans: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    /* 水彩晕染纹理背景 */
+    .watercolor-bg {
+      background-image:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(168,197,184,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 10%, rgba(232,213,183,0.3) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 55% at 70% 80%, rgba(201,139,139,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 35% 35% at 10% 75%, rgba(168,197,184,0.2) 0%, transparent 55%);
+    }
+
+    /* 品牌故事区水彩装饰 */
+    .watercolor-hero {
+      background-image:
+        radial-gradient(ellipse 50% 40% at 15% 15%, rgba(168,197,184,0.3) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 35% at 85% 25%, rgba(232,213,183,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 35% 40% at 75% 85%, rgba(201,139,139,0.12) 0%, transparent 55%),
+        radial-gradient(ellipse 30% 30% at 20% 80%, rgba(168,197,184,0.18) 0%, transparent 50%);
+    }
+
+    /* FAQ 手风琴内容动画 */
+    .faq-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease-out, padding-top 0.3s ease;
+    }
+    .faq-content.open {
+      max-height: 500px;
+    }
+
+    /* 箭头旋转动画 */
+    .faq-arrow {
+      transition: transform 0.3s ease;
+    }
+    .faq-arrow.rotate {
+      transform: rotate(180deg);
+    }
+
+    .font-serif { font-family: var(--font-serif); }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans">
+
+  <!-- @nav:start 导航组件，不需要的页面则不要复制此段（从 @nav:start 到 @nav:end） -->
+  <header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
+    <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+      <a href="home.html" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+          <i data-lucide="music" class="w-4 h-4 text-primary-deep"></i>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="font-serif text-lg font-semibold text-on-surface">艺演助手</span>
+          <span class="text-[10px] text-on-surface-variant tracking-wider">STAGEOS · 舞台演出智能规划</span>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-1">
+        <a href="home.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">首页</a>
+        <a href="costume.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">智能选款</a>
+        <a href="color.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">配色方案</a>
+        <a href="formation.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">队形预览</a>
+        <a href="about.html" class="px-3.5 py-2 text-sm font-medium text-primary-deep bg-primary/15 rounded-md transition-colors" aria-current="page">关于我们</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="costume.html" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity shadow-sm">
+          立即体验
+        </a>
+      </div>
+    </div>
+  </header>
+  <!-- @nav:end 导航组件，不需要的页面则不要复制此段 -->
+
+  <main class="max-w-5xl mx-auto px-6 py-16">
+    <!-- @main-content:start -->
+
+    <!-- 品牌故事区 -->
+    <section class="relative watercolor-hero rounded-3xl p-12 md:p-16 mb-20 overflow-hidden">
+      <div class="relative z-10 max-w-3xl">
+        <!-- 标签 -->
+        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary-deep text-xs font-medium mb-6">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          关于 StageOS 艺演助手
+        </span>
+        <!-- 大标题 -->
+        <h1 class="font-serif text-4xl md:text-5xl font-semibold text-on-surface leading-relaxed mb-8">
+          为每一次校园演出，<br/>
+          <span class="text-primary-deep">注入专业与温度</span>
+        </h1>
+        <!-- 正文第一段 -->
+        <p class="text-base text-on-surface-variant leading-relaxed mb-5">
+          三年前，我们的团队与几十位一线艺术教师深入交流，发现了一个普遍却被忽视的痛点：每逢演出季，老师们总要花费数周时间挑选服装、核对尺码、协调采购，大量本应倾注在艺术指导上的精力，被琐碎的事务消耗殆尽。
+        </p>
+        <!-- 正文第二段 -->
+        <p class="text-base text-on-surface-variant leading-relaxed mb-5">
+          于是有了艺演助手。我们的使命，是让艺术教育更平等、更高效——无论学校规模大小、无论老师经验深浅，都能轻松获得专业级的演出服装方案。我们坚信，每个孩子都值得穿上合适的演出服，自信地站上舞台，绽放属于自己的光芒。
+        </p>
+        <!-- 品牌价值观标签 -->
+        <div class="flex flex-wrap gap-2.5 mt-8">
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface/70 text-on-surface text-sm font-medium shadow-sm">
+            <i data-lucide="award" class="w-4 h-4 text-primary-deep"></i>
+            专业
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface/70 text-on-surface text-sm font-medium shadow-sm">
+            <i data-lucide="heart" class="w-4 h-4 text-rose"></i>
+            温暖
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface/70 text-on-surface text-sm font-medium shadow-sm">
+            <i data-lucide="shield-check" class="w-4 h-4 text-indigo"></i>
+            安全
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-surface/70 text-on-surface text-sm font-medium shadow-sm">
+            <i data-lucide="lightbulb" class="w-4 h-4 text-accent"></i>
+            创新
+          </span>
+        </div>
+      </div>
+      <!-- 装饰水彩点 -->
+      <div class="absolute top-8 right-8 w-32 h-32 rounded-full bg-accent-soft/20 blur-2xl"></div>
+      <div class="absolute bottom-12 right-20 w-24 h-24 rounded-full bg-primary-soft/20 blur-xl"></div>
+    </section>
+
+    <!-- 产品价值区 -->
+    <section class="mb-20">
+      <!-- 标题 -->
+      <div class="text-center mb-12">
+        <span class="text-sm text-accent font-medium tracking-wider uppercase">Why StageOS</span>
+        <h2 class="font-serif text-3xl font-semibold text-on-surface mt-2">为什么选择艺演助手</h2>
+        <p class="text-sm text-on-surface-variant mt-3 max-w-lg mx-auto">我们用技术与匠心，为每一场校园演出保驾护航</p>
+      </div>
+      <!-- 2x2 网格 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 价值卡片 1：智能高效 -->
+        <div class="bg-surface rounded-2xl p-7 shadow-card hover:shadow-float transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+            <i data-lucide="zap" class="w-6 h-6 text-primary-deep"></i>
+          </div>
+          <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">智能高效</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">AI 秒级生成完整服装方案，平均节省 80% 的选款与对比时间，让老师把精力还给教学本身。</p>
+        </div>
+        <!-- 价值卡片 2：专业精准 -->
+        <div class="bg-surface rounded-2xl p-7 shadow-card hover:shadow-float transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-5">
+            <i data-lucide="target" class="w-6 h-6 text-accent"></i>
+          </div>
+          <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">专业精准</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">基于 2000+ 真实校园演出案例训练，每一次推荐都经过一线艺术教师的验证与打磨。</p>
+        </div>
+        <!-- 价值卡片 3：安全可靠 -->
+        <div class="bg-surface rounded-2xl p-7 shadow-card hover:shadow-float transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-indigo/10 flex items-center justify-center mb-5">
+            <i data-lucide="shield-check" class="w-6 h-6 text-indigo"></i>
+          </div>
+          <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">安全可靠</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">全流程数据匿名化处理，符合校园数据安全规范，绝不收集学生个人敏感信息，让学校与家长安心。</p>
+        </div>
+        <!-- 价值卡片 4：持续优化 -->
+        <div class="bg-surface rounded-2xl p-7 shadow-card hover:shadow-float transition-shadow">
+          <div class="w-12 h-12 rounded-xl bg-rose/10 flex items-center justify-center mb-5">
+            <i data-lucide="refresh-cw" class="w-6 h-6 text-rose"></i>
+          </div>
+          <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">持续优化</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">每周更新款式库，紧跟潮流趋势；算法模型持续迭代，每一次使用都比上一次更懂你的需求。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 使用指南区 -->
+    <section class="mb-20">
+      <div class="text-center mb-12">
+        <span class="text-sm text-accent font-medium tracking-wider uppercase">Quick Start</span>
+        <h2 class="font-serif text-3xl font-semibold text-on-surface mt-2">快速上手 · 3 步开始</h2>
+        <p class="text-sm text-on-surface-variant mt-3">从零开始，只需三分钟，获取专属演出方案</p>
+      </div>
+      <!-- 步骤 -->
+      <div class="space-y-6">
+        <!-- Step 1 -->
+        <div class="bg-surface rounded-2xl p-7 shadow-card flex gap-6 items-start">
+          <div class="shrink-0 w-14 h-14 rounded-full bg-primary/15 flex items-center justify-center">
+            <span class="font-serif text-2xl font-semibold text-primary-deep">1</span>
+          </div>
+          <div class="pt-2">
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">创建项目</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed">
+              输入节目基本信息——节目类型、演出主题、参与人数、学段与身高区间。系统会根据这些信息，为你匹配最合适的款式库与风格方向。
+            </p>
+          </div>
+        </div>
+        <!-- Step 2 -->
+        <div class="bg-surface rounded-2xl p-7 shadow-card flex gap-6 items-start">
+          <div class="shrink-0 w-14 h-14 rounded-full bg-accent/15 flex items-center justify-center">
+            <span class="font-serif text-2xl font-semibold text-accent">2</span>
+          </div>
+          <div class="pt-2">
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">AI 生成</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed">
+              点击生成，等待约 30 秒，AI 将综合款式、配色、尺码、舞台背景等多重因素，为你输出一份完整的服装方案，包含主推荐与备选款式。
+            </p>
+          </div>
+        </div>
+        <!-- Step 3 -->
+        <div class="bg-surface rounded-2xl p-7 shadow-card flex gap-6 items-start">
+          <div class="shrink-0 w-14 h-14 rounded-full bg-rose/15 flex items-center justify-center">
+            <span class="font-serif text-2xl font-semibold text-rose">3</span>
+          </div>
+          <div class="pt-2">
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">确认采购</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed">
+              调整细节、对比备选方案，满意后一键导出采购清单与尺码对照表，附带执行 timeline，让后续采购与排练井然有序。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ 常见问题 -->
+    <section class="mb-20">
+      <div class="text-center mb-12">
+        <span class="text-sm text-accent font-medium tracking-wider uppercase">FAQ</span>
+        <h2 class="font-serif text-3xl font-semibold text-on-surface mt-2">常见问题</h2>
+        <p class="text-sm text-on-surface-variant mt-3">你可能想知道的，都在这里</p>
+      </div>
+      <!-- 手风琴列表 -->
+      <div id="faq-list" class="bg-surface rounded-2xl shadow-card overflow-hidden">
+        <!-- FAQ 1：需要上传学生照片吗 -->
+        <div class="faq-item border-b border-outline-variant/30 last:border-b-0">
+          <button id="faq-btn-1" class="faq-toggle w-full flex items-center justify-between px-7 py-5 text-left hover:bg-surface-container/30 transition-colors">
+            <span class="font-medium text-on-surface">需要上传学生照片吗？</span>
+            <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-on-surface-variant shrink-0 ml-4"></i>
+          </button>
+          <div class="faq-content px-7">
+            <div class="pb-5 text-sm text-on-surface-variant leading-relaxed">
+              不需要。我们的系统不需要任何学生的照片或面部识别数据。你只需要输入学生的人数、男女比例、身高区间和学段信息，AI 就能基于这些匿名数据生成合适的服装方案。我们非常重视校园数据安全，绝不收集任何可识别个人身份的信息。
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 2：服装尺码如何保证合适 -->
+        <div class="faq-item border-b border-outline-variant/30 last:border-b-0">
+          <button id="faq-btn-2" class="faq-toggle w-full flex items-center justify-between px-7 py-5 text-left hover:bg-surface-container/30 transition-colors">
+            <span class="font-medium text-on-surface">服装尺码如何保证合适？</span>
+            <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-on-surface-variant shrink-0 ml-4"></i>
+          </button>
+          <div class="faq-content px-7">
+            <div class="pb-5 text-sm text-on-surface-variant leading-relaxed">
+              我们推荐的每一款服装都附带详细的尺码对照表，涵盖身高、胸围、腰围等关键参数。你可以根据学生的实际身高区间选择对应的尺码范围。对于体型特殊的学生，方案中会给出针对性的建议，如选择偏大码、定制款或搭配调节配件。此外，我们合作的供应商均支持 7 天无理由退换（不影响二次销售的前提下）。
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 3：可以调整 AI 推荐的款式吗 -->
+        <div class="faq-item border-b border-outline-variant/30 last:border-b-0">
+          <button id="faq-btn-3" class="faq-toggle w-full flex items-center justify-between px-7 py-5 text-left hover:bg-surface-container/30 transition-colors">
+            <span class="font-medium text-on-surface">可以调整 AI 推荐的款式吗？</span>
+            <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-on-surface-variant shrink-0 ml-4"></i>
+          </button>
+          <div class="faq-content px-7">
+            <div class="pb-5 text-sm text-on-surface-variant leading-relaxed">
+              当然可以。每套方案都包含 1 个主推荐和 2-3 个备选款式，你可以自由切换对比。如果对颜色、袖长、面料等有特定偏好，也可以通过"调整参数"功能修改条件后重新生成。你还可以在方案基础上微调，比如更换配饰、调整配色比例等，系统会实时更新预览效果。
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 4：采购链接是从哪里来的 -->
+        <div class="faq-item border-b border-outline-variant/30 last:border-b-0">
+          <button id="faq-btn-4" class="faq-toggle w-full flex items-center justify-between px-7 py-5 text-left hover:bg-surface-container/30 transition-colors">
+            <span class="font-medium text-on-surface">采购链接是从哪里来的？</span>
+            <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-on-surface-variant shrink-0 ml-4"></i>
+          </button>
+          <div class="faq-content px-7">
+            <div class="pb-5 text-sm text-on-surface-variant leading-relaxed">
+              我们与多家经过严格筛选的专业演出服供应商合作，所有推荐款式均来自正规渠道。方案中的价格为参考价，最终以供应商实际报价为准。你可以直接通过我们导出的采购清单联系供应商，也可以将方案作为参考自行采购。我们不赚取任何采购差价，致力于提供客观公正的推荐。
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 5：数据安全和隐私如何保障 -->
+        <div class="faq-item border-b border-outline-variant/30 last:border-b-0">
+          <button id="faq-btn-5" class="faq-toggle w-full flex items-center justify-between px-7 py-5 text-left hover:bg-surface-container/30 transition-colors">
+            <span class="font-medium text-on-surface">数据安全和隐私如何保障？</span>
+            <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-on-surface-variant shrink-0 ml-4"></i>
+          </button>
+          <div class="faq-content px-7">
+            <div class="pb-5 text-sm text-on-surface-variant leading-relaxed">
+              我们严格遵守《个人信息保护法》和《未成年人网络保护条例》。系统设计遵循数据最小化原则，只收集生成方案所必需的匿名数据（如人数、身高区间等），不要求提供学生姓名、照片等个人敏感信息。所有数据存储在国内合规云服务商，采用加密传输与存储。学校可以随时申请删除项目数据，我们承诺在 3 个工作日内完成数据清除。
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 6：支持哪些支付方式 -->
+        <div class="faq-item border-b border-outline-variant/30 last:border-b-0">
+          <button id="faq-btn-6" class="faq-toggle w-full flex items-center justify-between px-7 py-5 text-left hover:bg-surface-container/30 transition-colors">
+            <span class="font-medium text-on-surface">支持哪些支付方式？</span>
+            <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-on-surface-variant shrink-0 ml-4"></i>
+          </button>
+          <div class="faq-content px-7">
+            <div class="pb-5 text-sm text-on-surface-variant leading-relaxed">
+              艺演助手平台本身提供基础版免费使用，包含智能选款、配色方案、队形预览等核心功能。高级功能与定制服务可通过学校对公转账、支付宝企业账户等方式支付。对于采购环节，支付方式由各供应商决定，通常支持对公转账、支付宝、微信支付等，具体以供应商实际政策为准。
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 7：方案不满意可以重新生成吗 -->
+        <div class="faq-item border-b border-outline-variant/30 last:border-b-0">
+          <button id="faq-btn-7" class="faq-toggle w-full flex items-center justify-between px-7 py-5 text-left hover:bg-surface-container/30 transition-colors">
+            <span class="font-medium text-on-surface">方案不满意可以重新生成吗？</span>
+            <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-on-surface-variant shrink-0 ml-4"></i>
+          </button>
+          <div class="faq-content px-7">
+            <div class="pb-5 text-sm text-on-surface-variant leading-relaxed">
+              可以的。每个项目支持多次重新生成，你可以调整参数（如预算、风格、颜色偏好等）后再次生成，系统会基于新条件给出不同的推荐方案。每次生成的方案都会自动保存，你可以在历史记录中对比不同版本，选择最满意的一个。
+            </div>
+          </div>
+        </div>
+        <!-- FAQ 8：有没有学校/机构版 -->
+        <div class="faq-item last:border-b-0">
+          <button id="faq-btn-8" class="faq-toggle w-full flex items-center justify-between px-7 py-5 text-left hover:bg-surface-container/30 transition-colors">
+            <span class="font-medium text-on-surface">有没有学校 / 机构版？</span>
+            <i data-lucide="chevron-down" class="faq-arrow w-5 h-5 text-on-surface-variant shrink-0 ml-4"></i>
+          </button>
+          <div class="faq-content px-7">
+            <div class="pb-5 text-sm text-on-surface-variant leading-relaxed">
+              有的。我们为学校和艺术机构提供专属版本，包含多项目管理、团队协作、专属艺术顾问、定制化款式库、数据统计分析等增值功能。学校/机构版支持按学期或按年订阅，可开具正规发票。如有需要，欢迎联系我们的商务团队，我们将为你量身定制解决方案。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 联系我们 CTA -->
+    <section class="mb-20">
+      <div class="bg-surface rounded-2xl shadow-card overflow-hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2">
+          <!-- 左侧文字 -->
+          <div class="p-8 md:p-10">
+            <span class="text-sm text-accent font-medium tracking-wider uppercase">Contact Us</span>
+            <h2 class="font-serif text-2xl font-semibold text-on-surface mt-2 mb-4">还有其他问题？</h2>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-6">
+              我们的艺术顾问团队随时准备为你解答疑问，提供一对一的方案咨询与指导。无论是产品使用、功能定制还是合作洽谈，都欢迎与我们联系。
+            </p>
+            <div class="space-y-4">
+              <!-- 邮箱 -->
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <i data-lucide="mail" class="w-4.5 h-4.5 text-primary-deep"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-on-surface-variant">邮箱</div>
+                  <div class="text-sm text-on-surface font-medium">hello@stageos.cn</div>
+                </div>
+              </div>
+              <!-- 工作时间 -->
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center shrink-0">
+                  <i data-lucide="clock" class="w-4.5 h-4.5 text-accent"></i>
+                </div>
+                <div>
+                  <div class="text-xs text-on-surface-variant">工作时间</div>
+                  <div class="text-sm text-on-surface font-medium">周一至周五 09:00 - 18:00</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 右侧二维码 -->
+          <div class="bg-surface-container-lowest p-8 md:p-10 flex flex-col items-center justify-center border-t md:border-t-0 md:border-l border-outline-variant/20">
+            <div class="w-40 h-40 rounded-xl bg-surface shadow-inner flex items-center justify-center mb-4">
+              <div class="text-center">
+                <i data-lucide="qr-code" class="w-16 h-16 text-on-surface-soft/40 mx-auto mb-2"></i>
+                <span class="text-xs text-on-surface-soft">微信公众号</span>
+              </div>
+            </div>
+            <p class="text-sm text-on-surface-variant text-center">
+              扫码关注公众号<br/>
+              获取最新演出资讯与使用技巧
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 底部大 CTA -->
+    <section class="text-center py-16 watercolor-bg rounded-3xl">
+      <h2 class="font-serif text-3xl md:text-4xl font-semibold text-on-surface mb-4">
+        准备好体验智能演出规划了吗？
+      </h2>
+      <p class="text-sm text-on-surface-variant mb-8 max-w-md mx-auto">
+        免费开始，无需注册，三分钟生成你的第一套演出服装方案
+      </p>
+      <a id="cta-bottom-btn" href="costume.html" class="inline-flex items-center gap-2 bg-primary text-on-primary px-8 py-3.5 rounded-xl text-base font-medium hover:opacity-90 transition-opacity shadow-float">
+        免费开始
+        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+      </a>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="mt-20 pt-10 border-t border-outline-variant/20">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4 pb-8">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <i data-lucide="music" class="w-3.5 h-3.5 text-primary-deep"></i>
+          </div>
+          <div>
+            <span class="font-serif text-sm font-semibold text-on-surface">艺演助手 StageOS</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-6 text-xs text-on-surface-variant">
+          <a href="home.html" class="hover:text-on-surface transition-colors">首页</a>
+          <a href="costume.html" class="hover:text-on-surface transition-colors">智能选款</a>
+          <a href="color.html" class="hover:text-on-surface transition-colors">配色方案</a>
+          <a href="formation.html" class="hover:text-on-surface transition-colors">队形预览</a>
+          <a href="about.html" class="hover:text-on-surface transition-colors">关于我们</a>
+        </div>
+      </div>
+      <div class="text-center text-xs text-on-surface-soft pb-6">
+        © 2024 StageOS 艺演助手. 让每个孩子的舞台，都被认真对待.
+      </div>
+    </footer>
+
+    <!-- @main-content:end -->
+  </main>
+
+  <script>
+    $(function() {
+      // FAQ 手风琴交互
+      // 点击问题展开/收起答案，箭头随动旋转
+      // 同时仅展开当前项（手风琴模式），其他项自动收起
+      $('#faq-list').on('click', '.faq-toggle', function() {
+        const $item = $(this).closest('.faq-item');
+        const $content = $item.find('.faq-content');
+        const $arrow = $(this).find('.faq-arrow');
+        const isOpen = $content.hasClass('open');
+
+        // 先收起所有
+        $('#faq-list .faq-content').removeClass('open');
+        $('#faq-list .faq-arrow').removeClass('rotate');
+
+        // 切换当前项
+        if (!isOpen) {
+          $content.addClass('open');
+          $arrow.addClass('rotate');
+        }
+      });
+
+      // 默认展开第一个 FAQ
+      $('#faq-btn-1').trigger('click');
+    });
+  </script>
+
+  <script>lucide.createIcons();</script>
+</body>
+
+</html>

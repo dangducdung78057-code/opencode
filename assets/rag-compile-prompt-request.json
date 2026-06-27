@@ -1,0 +1,26 @@
+{
+  "task": "costume_plan",
+  "input": {
+    "schoolStage": "senior",
+    "ageRange": "15-18岁",
+    "grade": "高中",
+    "programType": "mixed_chorus",
+    "programTheme": "校园艺术节混声合唱",
+    "programLevel": "校级",
+    "performerCount": 40,
+    "maleCount": 16,
+    "femaleCount": 24,
+    "students": [],
+    "venueType": "concert_hall",
+    "perPersonBudget": 180,
+    "screenThemeColor": "深蓝金色大屏",
+    "lightingStyle": "暖白面光",
+    "confirmedFormation": {
+      "summary": "三排阶梯式混声合唱队形",
+      "rows": [14, 14, 12],
+      "centerAxis": "中轴线清晰",
+      "spacingRule": "左右间距均匀"
+    },
+    "rehearsalFrequencyPerWeek": 3
+  }
+}

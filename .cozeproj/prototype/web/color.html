@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 字体 -->
+  <link href="https://fonts.googleapis.cn/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 — 莫兰迪·浅薄荷绿 + 暖米 === */
+      --color-primary:              #7fa89a;   /* 薄荷青灰，主色 */
+      --color-primary-soft:         #a8c5b8;   /* 浅薄荷，装饰 */
+      --color-primary-deep:         #5a7a70;   /* 深薄荷，标题/重点 */
+      --color-primary-container:    #dce9e0;   /* 主色容器 */
+      --color-on-primary:           #ffffff;
+      --color-accent:               #c9a87c;   /* 暖金棕，点缀 */
+      --color-accent-soft:          #e8d5b7;   /* 浅金 */
+      --color-rose:                 #c98b8b;   /* 豆沙粉，舞蹈主题 */
+      --color-indigo:               #6b7a8f;   /* 灰蓝，民乐主题 */
+
+      /* === 背景 / 表面 — 暖米色系 === */
+      --color-background:                 #f7f4ee;  /* 米白底色 */
+      --color-surface-container-lowest:   #faf7f1;  /* 最浅 */
+      --color-surface:                    #ffffff;  /* 卡片白 */
+      --color-surface-container:          #efeae0;  /* 输入框/容器 */
+      --color-surface-container-high:     #e5ded0;  /* 较深容器 */
+      --color-surface-container-highest:  #d8cfbe;  /* 最深容器 */
+
+      /* === 文字 === */
+      --color-on-surface:           #3d3a33;   /* 深暖灰主文字 */
+      --color-on-surface-variant:   #7a7568;   /* 次文字 */
+      --color-on-surface-soft:      #a39d8e;   /* 最次文字 */
+
+      /* === 功能色 === */
+      --color-success:  #6b9e7a;
+      --color-error:    #c97b6b;
+      --color-warning:  #d4a85a;
+
+      /* === 边框 === */
+      --color-outline:          #c8c0ad;
+      --color-outline-variant:  #d8d1c0;
+
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.625rem;
+      --radius-lg:   1rem;
+      --radius-xl:   1.5rem;
+      --radius-2xl:  2rem;
+      --radius-full: 9999px;
+
+      /* === 阴影 === */
+      --shadow-card:   0 2px 12px rgba(61,58,51,0.06);
+      --shadow-float:  0 12px 32px rgba(61,58,51,0.08);
+      --shadow-dialog: 0 28px 60px rgba(61,58,51,0.12);
+
+      /* === 字体 === */
+      --font-serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --font-sans: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    /* 水彩晕染纹理背景 */
+    .watercolor-bg {
+      background-image:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(168,197,184,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 10%, rgba(232,213,183,0.3) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 55% at 70% 80%, rgba(201,139,139,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 35% 35% at 10% 75%, rgba(168,197,184,0.2) 0%, transparent 55%);
+    }
+
+    .font-serif { font-family: var(--font-serif); }
+
+    /* 自定义滑块样式 */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--color-surface-container-high);
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      cursor: pointer;
+      border: 3px solid white;
+      box-shadow: 0 2px 6px rgba(61,58,51,0.15);
+      transition: transform 0.15s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.1);
+    }
+
+    /* 颜色选择器选中态 */
+    .color-swatch {
+      transition: all 0.2s ease;
+    }
+    .color-swatch:hover {
+      transform: scale(1.1);
+    }
+    .color-swatch.selected {
+      box-shadow: 0 0 0 3px white, 0 0 0 5px var(--color-primary);
+      transform: scale(1.05);
+    }
+
+    /* 方案卡片选中态 */
+    .scheme-card {
+      transition: all 0.2s ease;
+    }
+    .scheme-card.selected {
+      border-color: var(--color-primary);
+      box-shadow: 0 4px 16px rgba(127,168,154,0.15);
+    }
+
+    /* 灯光叠加层 */
+    .light-overlay-warm {
+      background: radial-gradient(ellipse at 50% 30%, rgba(255,200,130,0.25) 0%, rgba(255,180,100,0.1) 40%, transparent 70%);
+      mix-blend-mode: soft-light;
+    }
+    .light-overlay-cool {
+      background: radial-gradient(ellipse at 50% 30%, rgba(130,180,255,0.25) 0%, rgba(100,150,220,0.1) 40%, transparent 70%);
+      mix-blend-mode: soft-light;
+    }
+    .light-overlay-mixed {
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(255,200,130,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 20%, rgba(130,180,255,0.2) 0%, transparent 50%);
+      mix-blend-mode: soft-light;
+    }
+
+    /* 滚动条美化 */
+    .scrollbar-thin::-webkit-scrollbar {
+      width: 4px;
+    }
+    .scrollbar-thin::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+      background: var(--color-outline-variant);
+      border-radius: 2px;
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans min-h-screen">
+
+  <!-- @nav:start 导航组件 -->
+  <header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
+    <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+      <a href="home.html" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+          <i data-lucide="music" class="w-4 h-4 text-primary-deep"></i>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="font-serif text-lg font-semibold text-on-surface">艺演助手</span>
+          <span class="text-[10px] text-on-surface-variant tracking-wider">STAGEOS · 舞台演出智能规划</span>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-1">
+        <a href="home.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">首页</a>
+        <a href="costume.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">智能选款</a>
+        <a href="color.html" class="px-3.5 py-2 text-sm font-medium text-primary bg-primary/10 rounded-md transition-colors" aria-current="page">配色方案</a>
+        <a href="formation.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">队形预览</a>
+        <a href="about.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">关于我们</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="costume.html" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity shadow-sm">
+          立即体验
+        </a>
+      </div>
+    </div>
+  </header>
+  <!-- @nav:end 导航组件 -->
+
+  <!-- @main-content:start -->
+  <main class="max-w-7xl mx-auto px-6 py-6">
+    <!-- 页面标题区 -->
+    <div class="mb-6">
+      <h1 class="font-serif text-2xl font-bold text-on-surface">配色方案</h1>
+      <p class="text-sm text-on-surface-variant mt-1">选择大屏背景色与节目类型，AI 为你推荐最佳服装配色方案</p>
+    </div>
+
+    <!-- 三栏布局 -->
+    <div class="flex gap-5 items-start">
+      <!-- 左侧：颜色选择与参数面板 -->
+      <div id="left-panel" class="w-[280px] shrink-0">
+        <div class="bg-surface rounded-lg shadow-card p-5 space-y-6">
+          <!-- 标题 -->
+          <div>
+            <h2 class="font-serif text-base font-semibold text-on-surface">配色参数</h2>
+            <p class="text-xs text-on-surface-variant mt-1">调整参数获取个性化推荐</p>
+          </div>
+
+          <!-- 大屏背景色 -->
+          <div class="space-y-3">
+            <label class="text-sm font-medium text-on-surface block">大屏背景色</label>
+            <!-- 预设色块 -->
+            <div id="bg-color-swatches" class="grid grid-cols-4 gap-2.5">
+              <!-- 色块1：深蓝 -->
+              <button class="color-swatch selected w-full aspect-square rounded-lg shadow-sm cursor-pointer"
+                      data-color="#2c3e6b" style="background-color: #2c3e6b;" title="深蓝">
+              </button>
+              <!-- 色块2：藏青 -->
+              <button class="color-swatch w-full aspect-square rounded-lg shadow-sm cursor-pointer"
+                      data-color="#1e3a4f" style="background-color: #1e3a4f;" title="藏青">
+              </button>
+              <!-- 色块3：酒红 -->
+              <button class="color-swatch w-full aspect-square rounded-lg shadow-sm cursor-pointer"
+                      data-color="#6b2c3e" style="background-color: #6b2c3e;" title="酒红">
+              </button>
+              <!-- 色块4：墨绿 -->
+              <button class="color-swatch w-full aspect-square rounded-lg shadow-sm cursor-pointer"
+                      data-color="#2c5c4a" style="background-color: #2c5c4a;" title="墨绿">
+              </button>
+              <!-- 色块5：金色 -->
+              <button class="color-swatch w-full aspect-square rounded-lg shadow-sm cursor-pointer"
+                      data-color="#c9a87c" style="background-color: #c9a87c;" title="金色">
+              </button>
+              <!-- 色块6：紫色 -->
+              <button class="color-swatch w-full aspect-square rounded-lg shadow-sm cursor-pointer"
+                      data-color="#6b4a7a" style="background-color: #6b4a7a;" title="紫色">
+              </button>
+              <!-- 色块7：黑色 -->
+              <button class="color-swatch w-full aspect-square rounded-lg shadow-sm cursor-pointer border border-outline-variant/20"
+                      data-color="#1a1a1a" style="background-color: #1a1a1a;" title="黑色">
+              </button>
+              <!-- 色块8：白色 -->
+              <button class="color-swatch w-full aspect-square rounded-lg shadow-sm cursor-pointer border border-outline-variant/20"
+                      data-color="#f0ebe0" style="background-color: #f0ebe0;" title="白色">
+              </button>
+            </div>
+            <!-- 自定义取色 -->
+            <div class="flex items-center gap-2">
+              <input type="color" id="custom-bg-color" value="#2c3e6b"
+                     class="w-8 h-8 rounded-md cursor-pointer border-0 bg-transparent"/>
+              <label for="custom-bg-color" class="text-xs text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors">
+                自定义颜色
+              </label>
+            </div>
+          </div>
+
+          <!-- 节目类型 -->
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-on-surface block">节目类型</label>
+            <select id="program-type"
+                    class="w-full bg-surface-container border-none rounded-md px-3 py-2 text-sm text-on-surface
+                           focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors appearance-none cursor-pointer">
+              <option value="chorus">合唱</option>
+              <option value="dance">舞蹈</option>
+              <option value="instrumental">器乐</option>
+              <option value="recitation">朗诵</option>
+              <option value="host">主持</option>
+              <option value="etiquette">礼仪</option>
+            </select>
+          </div>
+
+          <!-- 灯光模式 -->
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-on-surface block">灯光模式</label>
+            <div id="light-mode-group" class="grid grid-cols-3 gap-2">
+              <button class="light-mode-btn px-3 py-2 text-xs rounded-md bg-primary/10 text-primary font-medium transition-colors"
+                      data-mode="warm">
+                暖光
+              </button>
+              <button class="light-mode-btn px-3 py-2 text-xs rounded-md bg-surface-container text-on-surface-variant hover:text-on-surface font-medium transition-colors"
+                      data-mode="cool">
+                冷光
+              </button>
+              <button class="light-mode-btn px-3 py-2 text-xs rounded-md bg-surface-container text-on-surface-variant hover:text-on-surface font-medium transition-colors"
+                      data-mode="mixed">
+                混合光
+              </button>
+            </div>
+          </div>
+
+          <!-- 性别比例滑块 -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="text-sm font-medium text-on-surface">性别比例</label>
+              <span id="gender-ratio-label" class="text-xs text-on-surface-variant">均衡</span>
+            </div>
+            <input type="range" id="gender-ratio" min="0" max="100" value="50"
+                   class="w-full"/>
+            <div class="flex justify-between text-[10px] text-on-surface-soft">
+              <span>男多</span>
+              <span>均衡</span>
+              <span>女多</span>
+            </div>
+          </div>
+
+          <!-- 学段 -->
+          <div class="space-y-2">
+            <label class="text-sm font-medium text-on-surface block">学段</label>
+            <div id="grade-group" class="grid grid-cols-3 gap-2">
+              <button class="grade-btn px-2 py-2 text-xs rounded-md bg-surface-container text-on-surface-variant hover:text-on-surface font-medium transition-colors"
+                      data-grade="primary-low">
+                小学低年级
+              </button>
+              <button class="grade-btn px-2 py-2 text-xs rounded-md bg-primary/10 text-primary font-medium transition-colors"
+                      data-grade="primary-high">
+                小学高年级
+              </button>
+              <button class="grade-btn px-2 py-2 text-xs rounded-md bg-surface-container text-on-surface-variant hover:text-on-surface font-medium transition-colors"
+                      data-grade="junior">
+                初中
+              </button>
+            </div>
+          </div>
+
+          <!-- 生成推荐按钮 -->
+          <button id="btn-generate"
+                  class="w-full bg-primary text-on-primary px-4 py-2.5 rounded-md text-sm font-medium
+                         hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+            生成推荐方案
+          </button>
+        </div>
+      </div>
+
+      <!-- 中间：实时预览区 -->
+      <div id="center-panel" class="flex-1 min-w-0">
+        <div class="bg-surface rounded-lg shadow-card p-5">
+          <!-- 预览区头部 -->
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="font-serif text-base font-semibold text-on-surface">配色预览</h2>
+              <p class="text-xs text-on-surface-variant mt-0.5">实时模拟舞台灯光与服装效果</p>
+            </div>
+            <!-- 预览工具栏 -->
+            <div id="preview-toolbar" class="flex items-center gap-1 bg-surface-container rounded-md p-1">
+              <!-- 视角切换 -->
+              <button id="btn-view-front" class="view-btn p-2 rounded-md text-on-surface bg-white shadow-sm transition-all"
+                      title="正面视角">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+              <button id="btn-view-top" class="view-btn p-2 rounded-md text-on-surface-variant hover:text-on-surface transition-colors"
+                      title="俯视视角">
+                <i data-lucide="view-from-above" class="w-4 h-4"></i>
+              </button>
+              <div class="w-px h-5 bg-outline-variant/40 mx-1"></div>
+              <!-- 灯光开关 -->
+              <button id="btn-light-toggle" class="light-toggle-btn p-2 rounded-md text-on-surface bg-white shadow-sm transition-all"
+                      title="灯光开关">
+                <i data-lucide="lightbulb" class="w-4 h-4"></i>
+              </button>
+              <div class="w-px h-5 bg-outline-variant/40 mx-1"></div>
+              <!-- 全屏按钮 -->
+              <button id="btn-fullscreen" class="p-2 rounded-md text-on-surface-variant hover:text-on-surface transition-colors"
+                      title="全屏预览">
+                <i data-lucide="maximize" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- 舞台预览画布 -->
+          <div id="stage-preview" class="relative w-full aspect-[16/10] rounded-lg overflow-hidden shadow-inner"
+               style="background: linear-gradient(180deg, #2c3e6b 0%, #1e2d52 50%, #141e38 100%);">
+
+            <!-- 舞台地面/台口 -->
+            <div class="absolute bottom-0 left-0 right-0 h-1/4"
+                 style="background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%);">
+            </div>
+            <div class="absolute bottom-[15%] left-[10%] right-[10%] h-1 bg-white/20 rounded-full"></div>
+
+            <!-- 人物剪影层 - 弧形排列 10人 -->
+            <svg id="stage-silhouettes" class="absolute inset-0 w-full h-full" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid meet">
+              <!-- 说明：人物按弧形排列，前排5人，后排5人，男女交替 -->
+              <!-- 后排人物（较小） -->
+
+              <!-- 后排人物1 - 女生 - 左后 -->
+              <g class="person-figure" transform="translate(160, 220)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-15" rx="10" ry="11" fill="#e8d5b7"/>
+                <!-- 头发(女生长发) -->
+                <path d="M -10 -15 Q -14 -5 -10 0 Q -8 -8 -5 -10 Q -8 -18 -10 -15 Z" fill="#8b7355"/>
+                <path d="M 10 -15 Q 14 -5 10 0 Q 8 -8 5 -10 Q 8 -18 10 -15 Z" fill="#8b7355"/>
+                <!-- 身体(连衣裙) -->
+                <path d="M 0 -4 L -16 38 L 16 38 Z" fill="#c9a87c"/>
+              </g>
+
+              <!-- 后排人物2 - 男生 -->
+              <g class="person-figure" transform="translate(250, 205)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-15" rx="10" ry="11" fill="#e8d5b7"/>
+                <!-- 短发 -->
+                <path d="M -10 -18 Q 0 -25 10 -18 L 10 -10 Q 5 -15 0 -14 Q -5 -15 -10 -10 Z" fill="#5a4a3a"/>
+                <!-- 身体(上衣+裤子) -->
+                <rect x="-12" y="-4" width="24" height="22" rx="3" fill="#7fa89a"/>
+                <rect x="-10" y="18" width="8" height="22" fill="#5a7a70"/>
+                <rect x="2" y="18" width="8" height="22" fill="#5a7a70"/>
+              </g>
+
+              <!-- 后排人物3 - 女生 - 中间后 -->
+              <g class="person-figure" transform="translate(350, 198)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-15" rx="10" ry="11" fill="#e8d5b7"/>
+                <!-- 头发 -->
+                <path d="M -10 -15 Q -14 -5 -10 0 Q -8 -8 -5 -10 Q -8 -18 -10 -15 Z" fill="#8b7355"/>
+                <path d="M 10 -15 Q 14 -5 10 0 Q 8 -8 5 -10 Q 8 -18 10 -15 Z" fill="#8b7355"/>
+                <!-- 身体 -->
+                <path d="M 0 -4 L -16 38 L 16 38 Z" fill="#c98b8b"/>
+              </g>
+
+              <!-- 后排人物4 - 男生 -->
+              <g class="person-figure" transform="translate(450, 205)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-15" rx="10" ry="11" fill="#e8d5b7"/>
+                <!-- 短发 -->
+                <path d="M -10 -18 Q 0 -25 10 -18 L 10 -10 Q 5 -15 0 -14 Q -5 -15 -10 -10 Z" fill="#5a4a3a"/>
+                <!-- 身体 -->
+                <rect x="-12" y="-4" width="24" height="22" rx="3" fill="#6b7a8f"/>
+                <rect x="-10" y="18" width="8" height="22" fill="#4a5a6f"/>
+                <rect x="2" y="18" width="8" height="22" fill="#4a5a6f"/>
+              </g>
+
+              <!-- 后排人物5 - 女生 - 右后 -->
+              <g class="person-figure" transform="translate(550, 220)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-15" rx="10" ry="11" fill="#e8d5b7"/>
+                <!-- 头发 -->
+                <path d="M -10 -15 Q -14 -5 -10 0 Q -8 -8 -5 -10 Q -8 -18 -10 -15 Z" fill="#8b7355"/>
+                <path d="M 10 -15 Q 14 -5 10 0 Q 8 -8 5 -10 Q 8 -18 10 -15 Z" fill="#8b7355"/>
+                <!-- 身体 -->
+                <path d="M 0 -4 L -16 38 L 16 38 Z" fill="#a8c5b8"/>
+              </g>
+
+              <!-- 前排人物（较大） -->
+
+              <!-- 前排人物1 - 女生 - 左前 -->
+              <g class="person-figure" transform="translate(180, 310)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-18" rx="12" ry="13" fill="#e8d5b7"/>
+                <!-- 头发 -->
+                <path d="M -12 -18 Q -17 -6 -12 1 Q -10 -9 -6 -11 Q -10 -22 -12 -18 Z" fill="#8b7355"/>
+                <path d="M 12 -18 Q 17 -6 12 1 Q 10 -9 6 -11 Q 10 -22 12 -18 Z" fill="#8b7355"/>
+                <!-- 发饰 -->
+                <circle cx="8" cy="-22" r="3" fill="#c98b8b"/>
+                <!-- 身体(连衣裙) -->
+                <path d="M 0 -5 L -20 48 L 20 48 Z" fill="#c9a87c"/>
+                <!-- 裙子细节 -->
+                <line x1="-10" y1="20" x2="-12" y2="48" stroke="#b09060" stroke-width="1" opacity="0.5"/>
+                <line x1="10" y1="20" x2="12" y2="48" stroke="#b09060" stroke-width="1" opacity="0.5"/>
+              </g>
+
+              <!-- 前排人物2 - 男生 -->
+              <g class="person-figure" transform="translate(290, 295)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-18" rx="12" ry="13" fill="#e8d5b7"/>
+                <!-- 短发 -->
+                <path d="M -12 -22 Q 0 -30 12 -22 L 12 -12 Q 6 -18 0 -17 Q -6 -18 -12 -12 Z" fill="#5a4a3a"/>
+                <!-- 身体(上衣+裤子) -->
+                <rect x="-14" y="-5" width="28" height="26" rx="4" fill="#7fa89a"/>
+                <!-- 领结 -->
+                <path d="M -5 -3 L 0 0 L -5 3 Z M 5 -3 L 0 0 L 5 3 Z" fill="#c9a87c"/>
+                <rect x="-2" y="-2" width="4" height="4" fill="#c9a87c"/>
+                <!-- 裤子 -->
+                <rect x="-12" y="21" width="10" height="28" fill="#5a7a70"/>
+                <rect x="2" y="21" width="10" height="28" fill="#5a7a70"/>
+              </g>
+
+              <!-- 前排人物3 - 女生 - 中间前（主位） -->
+              <g class="person-figure" transform="translate(400, 288)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-18" rx="12" ry="13" fill="#e8d5b7"/>
+                <!-- 头发(长发带卷) -->
+                <path d="M -12 -18 Q -18 -4 -14 5 Q -10 -6 -6 -10 Q -8 -22 -12 -18 Z" fill="#8b7355"/>
+                <path d="M 12 -18 Q 18 -4 14 5 Q 10 -6 6 -10 Q 8 -22 12 -18 Z" fill="#8b7355"/>
+                <!-- 头顶装饰 -->
+                <path d="M 0 -30 Q 5 -33 8 -28 Q 4 -26 0 -30 Z" fill="#c98b8b"/>
+                <!-- 身体(蓬蓬裙) -->
+                <path d="M 0 -5 L -22 50 L 22 50 Z" fill="#c98b8b"/>
+                <!-- 腰带 -->
+                <rect x="-15" y="15" width="30" height="3" fill="#a86b6b"/>
+                <!-- 裙子褶 -->
+                <line x1="-15" y1="25" x2="-18" y2="50" stroke="#a86b6b" stroke-width="1" opacity="0.4"/>
+                <line x1="0" y1="20" x2="0" y2="50" stroke="#a86b6b" stroke-width="1" opacity="0.4"/>
+                <line x1="15" y1="25" x2="18" y2="50" stroke="#a86b6b" stroke-width="1" opacity="0.4"/>
+              </g>
+
+              <!-- 前排人物4 - 男生 -->
+              <g class="person-figure" transform="translate(510, 295)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-18" rx="12" ry="13" fill="#e8d5b7"/>
+                <!-- 短发 -->
+                <path d="M -12 -22 Q 0 -30 12 -22 L 12 -12 Q 6 -18 0 -17 Q -6 -18 -12 -12 Z" fill="#5a4a3a"/>
+                <!-- 身体 -->
+                <rect x="-14" y="-5" width="28" height="26" rx="4" fill="#6b7a8f"/>
+                <!-- 领带 -->
+                <path d="M 0 -3 L -3 12 L 0 18 L 3 12 Z" fill="#c9a87c"/>
+                <!-- 裤子 -->
+                <rect x="-12" y="21" width="10" height="28" fill="#4a5a6f"/>
+                <rect x="2" y="21" width="10" height="28" fill="#4a5a6f"/>
+              </g>
+
+              <!-- 前排人物5 - 女生 - 右前 -->
+              <g class="person-figure" transform="translate(620, 310)">
+                <!-- 头 -->
+                <ellipse cx="0" cy="-18" rx="12" ry="13" fill="#e8d5b7"/>
+                <!-- 头发(马尾) -->
+                <path d="M -12 -18 Q -16 -8 -12 0 Q -9 -8 -5 -10 Q -8 -20 -12 -18 Z" fill="#8b7355"/>
+                <path d="M 12 -20 Q 20 -15 18 -5 Q 14 -8 10 -10 Q 10 -22 12 -20 Z" fill="#8b7355"/>
+                <!-- 身体 -->
+                <path d="M 0 -5 L -20 48 L 20 48 Z" fill="#a8c5b8"/>
+                <!-- 裙子细节 -->
+                <line x1="-8" y1="18" x2="-10" y2="48" stroke="#8aaa9a" stroke-width="1" opacity="0.5"/>
+                <line x1="8" y1="18" x2="10" y2="48" stroke="#8aaa9a" stroke-width="1" opacity="0.5"/>
+              </g>
+            </svg>
+
+            <!-- 灯光叠加层 -->
+            <div id="light-overlay" class="absolute inset-0 pointer-events-none light-overlay-warm transition-opacity duration-500 opacity-100">
+            </div>
+
+            <!-- 舞台灯光束效果（装饰） -->
+            <div class="absolute top-0 left-1/4 w-px h-1/2 bg-gradient-to-b from-yellow-200/30 to-transparent transform -rotate-6"></div>
+            <div class="absolute top-0 left-1/2 w-px h-1/2 bg-gradient-to-b from-yellow-200/20 to-transparent"></div>
+            <div class="absolute top-0 right-1/4 w-px h-1/2 bg-gradient-to-b from-yellow-200/30 to-transparent transform rotate-6"></div>
+          </div>
+
+          <!-- 撞色检测结果条 -->
+          <div id="contrast-result" class="mt-4 flex items-center gap-3 px-4 py-3 rounded-md bg-success/10 border border-success/20">
+            <div class="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center shrink-0">
+              <i data-lucide="check" class="w-4 h-4 text-success"></i>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-success">对比度适宜</p>
+              <p class="text-xs text-success/70 mt-0.5">背景与服装对比度适宜，舞台效果佳</p>
+            </div>
+          </div>
+
+          <!-- 当前配色信息 -->
+          <div class="mt-4 grid grid-cols-3 gap-3">
+            <div class="bg-surface-container/50 rounded-md p-3">
+              <p class="text-[10px] text-on-surface-variant uppercase tracking-wide">主服装色</p>
+              <div class="flex items-center gap-2 mt-1.5">
+                <div class="w-5 h-5 rounded-full shadow-sm" style="background-color: #c98b8b;"></div>
+                <span class="text-sm font-medium text-on-surface">豆沙粉</span>
+              </div>
+            </div>
+            <div class="bg-surface-container/50 rounded-md p-3">
+              <p class="text-[10px] text-on-surface-variant uppercase tracking-wide">辅助色</p>
+              <div class="flex items-center gap-2 mt-1.5">
+                <div class="w-5 h-5 rounded-full shadow-sm" style="background-color: #c9a87c;"></div>
+                <span class="text-sm font-medium text-on-surface">暖金棕</span>
+              </div>
+            </div>
+            <div class="bg-surface-container/50 rounded-md p-3">
+              <p class="text-[10px] text-on-surface-variant uppercase tracking-wide">点缀色</p>
+              <div class="flex items-center gap-2 mt-1.5">
+                <div class="w-5 h-5 rounded-full shadow-sm" style="background-color: #7fa89a;"></div>
+                <span class="text-sm font-medium text-on-surface">薄荷青</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧：配色方案推荐 -->
+      <div id="right-panel" class="w-[320px] shrink-0">
+        <div class="bg-surface rounded-lg shadow-card p-5 flex flex-col h-[calc(100vh-10rem)]">
+          <!-- 标题 -->
+          <div class="flex items-center justify-between mb-4 shrink-0">
+            <div>
+              <h2 class="font-serif text-base font-semibold text-on-surface">推荐方案</h2>
+            </div>
+            <span class="text-xs text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-full">共 6 套</span>
+          </div>
+
+          <!-- 方案卡片列表 -->
+          <div id="scheme-list" class="flex-1 overflow-y-auto scrollbar-thin space-y-3 pr-1 -mr-1">
+
+            <!-- 方案1：春野薄荷（选中状态） -->
+            <div class="scheme-card selected bg-surface-container-lowest rounded-lg p-4 border-2 border-primary cursor-pointer relative"
+                 data-scheme="spring-mint">
+              <!-- 选中勾选 -->
+              <div class="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
+                <i data-lucide="check" class="w-3 h-3 text-white"></i>
+              </div>
+              <!-- 方案名 -->
+              <h3 class="font-serif font-semibold text-on-surface text-sm">春野薄荷</h3>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">清新自然，适合合唱与朗诵</p>
+
+              <!-- 颜色占比条 -->
+              <div class="flex h-3 rounded-full overflow-hidden mt-3 mb-2">
+                <div class="bg-[#7fa89a]" style="width: 45%;" title="薄荷青 45%"></div>
+                <div class="bg-[#e8d5b7]" style="width: 30%;" title="浅金米 30%"></div>
+                <div class="bg-[#c98b8b]" style="width: 15%;" title="豆沙粉 15%"></div>
+                <div class="bg-[#6b7a8f]" style="width: 10%;" title="灰蓝 10%"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-on-surface-soft">
+                <span>主色 45%</span>
+                <span>辅色 30%</span>
+                <span>点缀 25%</span>
+              </div>
+
+              <!-- 男女款说明 -->
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">男款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#7fa89a]"></div>
+                    <span class="text-[10px] text-on-surface">薄荷青衬衫</span>
+                  </div>
+                </div>
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">女款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#e8d5b7]"></div>
+                    <span class="text-[10px] text-on-surface">浅金连衣裙</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 标签 -->
+              <div class="flex flex-wrap gap-1 mt-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-primary/10 text-primary">合唱推荐</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-accent/10 text-accent">清新风格</span>
+              </div>
+
+              <!-- 应用按钮 -->
+              <button class="btn-apply-scheme w-full mt-3 py-1.5 text-xs font-medium text-primary bg-primary/10 rounded-md
+                             hover:bg-primary/20 transition-colors">
+                应用此方案
+              </button>
+            </div>
+
+            <!-- 方案2：暖阳金辉 -->
+            <div class="scheme-card bg-surface-container-lowest rounded-lg p-4 border-2 border-transparent cursor-pointer hover:border-outline-variant/40 transition-all"
+                 data-scheme="golden-sun">
+              <!-- 方案名 -->
+              <h3 class="font-serif font-semibold text-on-surface text-sm">暖阳金辉</h3>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">温暖典雅，适合节日庆典</p>
+
+              <!-- 颜色占比条 -->
+              <div class="flex h-3 rounded-full overflow-hidden mt-3 mb-2">
+                <div class="bg-[#c9a87c]" style="width: 40%;" title="暖金棕 40%"></div>
+                <div class="bg-[#e8d5b7]" style="width: 25%;" title="浅金米 25%"></div>
+                <div class="bg-[#c98b8b]" style="width: 20%;" title="豆沙粉 20%"></div>
+                <div class="bg-[#7a6b5a]" style="width: 15%;" title="深棕 15%"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-on-surface-soft">
+                <span>主色 40%</span>
+                <span>辅色 25%</span>
+                <span>点缀 35%</span>
+              </div>
+
+              <!-- 男女款说明 -->
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">男款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#7a6b5a]"></div>
+                    <span class="text-[10px] text-on-surface">深棕礼服</span>
+                  </div>
+                </div>
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">女款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#c9a87c]"></div>
+                    <span class="text-[10px] text-on-surface">金色蓬蓬裙</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 标签 -->
+              <div class="flex flex-wrap gap-1 mt-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-accent/15 text-accent">节日主题</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-rose/10 text-rose">舞蹈推荐</span>
+              </div>
+
+              <!-- 应用按钮 -->
+              <button class="btn-apply-scheme w-full mt-3 py-1.5 text-xs font-medium text-primary bg-primary/10 rounded-md
+                             hover:bg-primary/20 transition-colors">
+                应用此方案
+              </button>
+            </div>
+
+            <!-- 方案3：星海夜蓝 -->
+            <div class="scheme-card bg-surface-container-lowest rounded-lg p-4 border-2 border-transparent cursor-pointer hover:border-outline-variant/40 transition-all"
+                 data-scheme="starry-night">
+              <!-- 方案名 -->
+              <h3 class="font-serif font-semibold text-on-surface text-sm">星海夜蓝</h3>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">沉稳大气，适合器乐演奏</p>
+
+              <!-- 颜色占比条 -->
+              <div class="flex h-3 rounded-full overflow-hidden mt-3 mb-2">
+                <div class="bg-[#6b7a8f]" style="width: 50%;" title="灰蓝 50%"></div>
+                <div class="bg-[#c9a87c]" style="width: 25%;" title="暖金 25%"></div>
+                <div class="bg-[#a8c5b8]" style="width: 15%;" title="浅薄荷 15%"></div>
+                <div class="bg-[#4a5a6f]" style="width: 10%;" title="深蓝灰 10%"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-on-surface-soft">
+                <span>主色 50%</span>
+                <span>辅色 25%</span>
+                <span>点缀 25%</span>
+              </div>
+
+              <!-- 男女款说明 -->
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">男款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#6b7a8f]"></div>
+                    <span class="text-[10px] text-on-surface">灰蓝西装</span>
+                  </div>
+                </div>
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">女款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#4a5a6f]"></div>
+                    <span class="text-[10px] text-on-surface">深蓝长裙</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 标签 -->
+              <div class="flex flex-wrap gap-1 mt-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-indigo/10 text-indigo">器乐推荐</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-on-surface/10 text-on-surface-variant">正式场合</span>
+              </div>
+
+              <!-- 应用按钮 -->
+              <button class="btn-apply-scheme w-full mt-3 py-1.5 text-xs font-medium text-primary bg-primary/10 rounded-md
+                             hover:bg-primary/20 transition-colors">
+                应用此方案
+              </button>
+            </div>
+
+            <!-- 方案4：樱粉梦境 -->
+            <div class="scheme-card bg-surface-container-lowest rounded-lg p-4 border-2 border-transparent cursor-pointer hover:border-outline-variant/40 transition-all"
+                 data-scheme="cherry-dream">
+              <!-- 方案名 -->
+              <h3 class="font-serif font-semibold text-on-surface text-sm">樱粉梦境</h3>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">柔美浪漫，适合舞蹈表演</p>
+
+              <!-- 颜色占比条 -->
+              <div class="flex h-3 rounded-full overflow-hidden mt-3 mb-2">
+                <div class="bg-[#c98b8b]" style="width: 45%;" title="豆沙粉 45%"></div>
+                <div class="bg-[#e8d5b7]" style="width: 30%;" title="浅金米 30%"></div>
+                <div class="bg-[#fff0f0]" style="width: 15%;" title="浅粉白 15%"></div>
+                <div class="bg-[#a8c5b8]" style="width: 10%;" title="薄荷绿 10%"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-on-surface-soft">
+                <span>主色 45%</span>
+                <span>辅色 30%</span>
+                <span>点缀 25%</span>
+              </div>
+
+              <!-- 男女款说明 -->
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">男款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#e8d5b7]"></div>
+                    <span class="text-[10px] text-on-surface">浅粉衬衫</span>
+                  </div>
+                </div>
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">女款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#c98b8b]"></div>
+                    <span class="text-[10px] text-on-surface">粉纱舞裙</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 标签 -->
+              <div class="flex flex-wrap gap-1 mt-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-rose/10 text-rose">舞蹈推荐</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-accent/10 text-accent">柔美风格</span>
+              </div>
+
+              <!-- 应用按钮 -->
+              <button class="btn-apply-scheme w-full mt-3 py-1.5 text-xs font-medium text-primary bg-primary/10 rounded-md
+                             hover:bg-primary/20 transition-colors">
+                应用此方案
+              </button>
+            </div>
+
+            <!-- 方案5：翠竹清韵 -->
+            <div class="scheme-card bg-surface-container-lowest rounded-lg p-4 border-2 border-transparent cursor-pointer hover:border-outline-variant/40 transition-all"
+                 data-scheme="bamboo-charm">
+              <!-- 方案名 -->
+              <h3 class="font-serif font-semibold text-on-surface text-sm">翠竹清韵</h3>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">东方意境，适合民乐与朗诵</p>
+
+              <!-- 颜色占比条 -->
+              <div class="flex h-3 rounded-full overflow-hidden mt-3 mb-2">
+                <div class="bg-[#5a7a70]" style="width: 40%;" title="深薄荷 40%"></div>
+                <div class="bg-[#c9a87c]" style="width: 30%;" title="暖金 30%"></div>
+                <div class="bg-[#e8d5b7]" style="width: 20%;" title="浅米 20%"></div>
+                <div class="bg-[#7a6b5a]" style="width: 10%;" title="棕灰 10%"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-on-surface-soft">
+                <span>主色 40%</span>
+                <span>辅色 30%</span>
+                <span>点缀 30%</span>
+              </div>
+
+              <!-- 男女款说明 -->
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">男款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#5a7a70]"></div>
+                    <span class="text-[10px] text-on-surface">墨绿长衫</span>
+                  </div>
+                </div>
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">女款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#c9a87c]"></div>
+                    <span class="text-[10px] text-on-surface">金色旗袍</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 标签 -->
+              <div class="flex flex-wrap gap-1 mt-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-primary/10 text-primary">民乐推荐</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-on-surface/10 text-on-surface-variant">东方美学</span>
+              </div>
+
+              <!-- 应用按钮 -->
+              <button class="btn-apply-scheme w-full mt-3 py-1.5 text-xs font-medium text-primary bg-primary/10 rounded-md
+                             hover:bg-primary/20 transition-colors">
+                应用此方案
+              </button>
+            </div>
+
+            <!-- 方案6：紫霞流光 -->
+            <div class="scheme-card bg-surface-container-lowest rounded-lg p-4 border-2 border-transparent cursor-pointer hover:border-outline-variant/40 transition-all"
+                 data-scheme="purple-glow">
+              <!-- 方案名 -->
+              <h3 class="font-serif font-semibold text-on-surface text-sm">紫霞流光</h3>
+              <p class="text-[11px] text-on-surface-variant mt-0.5">梦幻高贵，适合大型晚会</p>
+
+              <!-- 颜色占比条 -->
+              <div class="flex h-3 rounded-full overflow-hidden mt-3 mb-2">
+                <div class="bg-[#8b7a9e]" style="width: 40%;" title="灰紫 40%"></div>
+                <div class="bg-[#c9a87c]" style="width: 25%;" title="暖金 25%"></div>
+                <div class="bg-[#e8d5b7]" style="width: 20%;" title="浅金 20%"></div>
+                <div class="bg-[#6b5a7e]" style="width: 15%;" title="深紫 15%"></div>
+              </div>
+              <div class="flex justify-between text-[10px] text-on-surface-soft">
+                <span>主色 40%</span>
+                <span>辅色 25%</span>
+                <span>点缀 35%</span>
+              </div>
+
+              <!-- 男女款说明 -->
+              <div class="grid grid-cols-2 gap-2 mt-3">
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">男款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#6b5a7e]"></div>
+                    <span class="text-[10px] text-on-surface">深紫礼服</span>
+                  </div>
+                </div>
+                <div class="bg-white/60 rounded px-2 py-1.5">
+                  <p class="text-[10px] text-on-surface-variant">女款</p>
+                  <div class="flex items-center gap-1.5 mt-1">
+                    <div class="w-3 h-3 rounded-full bg-[#8b7a9e]"></div>
+                    <span class="text-[10px] text-on-surface">紫纱长裙</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 标签 -->
+              <div class="flex flex-wrap gap-1 mt-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-[#8b7a9e]/20 text-[#6b5a7e]">晚会推荐</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-medium bg-accent/10 text-accent">华丽风格</span>
+              </div>
+
+              <!-- 应用按钮 -->
+              <button class="btn-apply-scheme w-full mt-3 py-1.5 text-xs font-medium text-primary bg-primary/10 rounded-md
+                             hover:bg-primary/20 transition-colors">
+                应用此方案
+              </button>
+            </div>
+
+          </div>
+
+          <!-- 底部主按钮 -->
+          <div class="mt-4 pt-4 border-t border-outline-variant/30 shrink-0">
+            <button id="btn-use-scheme"
+                    class="w-full bg-primary text-on-primary px-4 py-2.5 rounded-md text-sm font-medium
+                           hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center justify-center gap-2 shadow-sm">
+              <i data-lucide="palette" class="w-4 h-4"></i>
+              使用这套配色
+            </button>
+            <p class="text-[11px] text-on-surface-soft text-center mt-2">
+              将带入智能选款页面生成服装方案
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- @main-content:end -->
+
+  <script>lucide.createIcons();</script>
+
+  <script>
+    $(function() {
+      // ========== 全局状态 ==========
+      const state = {
+        bgColor: '#2c3e6b',
+        lightMode: 'warm',
+      };
+
+      // ========== 1. 背景色选择器 ==========
+      // 点击预设色块切换背景色
+      $('#bg-color-swatches').on('click', '.color-swatch', function() {
+        const $this = $(this);
+        const color = $this.data('color');
+
+        // 更新选中状态
+        $('#bg-color-swatches .color-swatch').removeClass('selected');
+        $this.addClass('selected');
+
+        // 更新自定义取色器值
+        $('#custom-bg-color').val(color);
+
+        // 更新预览背景
+        updateStageBackground(color);
+      });
+
+      // 自定义取色器变化
+      $('#custom-bg-color').on('input', function() {
+        const color = $(this).val();
+        $('#bg-color-swatches .color-swatch').removeClass('selected');
+        updateStageBackground(color);
+      });
+
+      // 更新舞台背景色（渐变色）
+      function updateStageBackground(color) {
+        state.bgColor = color;
+        // 生成渐变色（基于选中色的深浅变化）
+        const lighter = adjustBrightness(color, 20);
+        const darker = adjustBrightness(color, -30);
+        $('#stage-preview').css('background', `linear-gradient(180deg, ${lighter} 0%, ${color} 50%, ${darker} 100%)`);
+
+        // 重新检测撞色
+        checkContrast(color);
+      }
+
+      // 辅助：调整颜色亮度
+      function adjustBrightness(hex, percent) {
+        const num = parseInt(hex.replace('#', ''), 16);
+        const r = Math.min(255, Math.max(0, (num >> 16) + percent));
+        const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + percent));
+        const b = Math.min(255, Math.max(0, (num & 0x0000FF) + percent));
+        return '#' + (0x1000000 + (r << 16) + (g << 8) + b).toString(16).slice(1);
+      }
+
+      // 撞色检测（模拟）
+      function checkContrast(bgColor) {
+        // 简单模拟：深蓝、藏青、墨绿、紫色、黑色对比度好；酒红、金色、白色可能需要调整
+        const lowContrastColors = ['#6b2c3e', '#c9a87c', '#f0ebe0'];
+        const isLow = lowContrastColors.some(c => c.toLowerCase() === bgColor.toLowerCase());
+
+        const $result = $('#contrast-result');
+        if (isLow) {
+          $result.removeClass('bg-success/10 border-success/20')
+                  .addClass('bg-warning/10 border-warning/20');
+          $result.find('.text-success').removeClass('text-success').addClass('text-warning');
+          $result.find('.text-success\\/70').removeClass('text-success/70').addClass('text-warning/70');
+          $result.find('.bg-success\\/20').removeClass('bg-success/20').addClass('bg-warning/20');
+          $result.find('svg').parent().replaceWith('<div class="w-8 h-8 rounded-full bg-warning/20 flex items-center justify-center shrink-0"><i data-lucide="alert-triangle" class="w-4 h-4 text-warning"></i></div>');
+          $result.find('p:first').text('建议调整');
+          $result.find('p:last').text('当前背景色与主服装色相近，建议调整服装配色');
+        } else {
+          $result.removeClass('bg-warning/10 border-warning/20')
+                  .addClass('bg-success/10 border-success/20');
+          $result.find('.text-warning').removeClass('text-warning').addClass('text-success');
+          $result.find('.text-warning\\/70').removeClass('text-warning/70').addClass('text-success/70');
+          $result.find('.bg-warning\\/20').removeClass('bg-warning/20').addClass('bg-success/20');
+          $result.find('svg').parent().replaceWith('<div class="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center shrink-0"><i data-lucide="check" class="w-4 h-4 text-success"></i></div>');
+          $result.find('p:first').text('对比度适宜');
+          $result.find('p:last').text('背景与服装对比度适宜，舞台效果佳');
+        }
+        lucide.createIcons();
+      }
+
+      // ========== 2. 灯光模式切换 ==========
+      $('#light-mode-group').on('click', '.light-mode-btn', function() {
+        const $this = $(this);
+        const mode = $this.data('mode');
+
+        // 更新按钮状态
+        $('#light-mode-group .light-mode-btn').removeClass('bg-primary/10 text-primary')
+          .addClass('bg-surface-container text-on-surface-variant hover:text-on-surface');
+        $this.removeClass('bg-surface-container text-on-surface-variant hover:text-on-surface')
+          .addClass('bg-primary/10 text-primary');
+
+        // 更新灯光叠加层
+        state.lightMode = mode;
+        const $overlay = $('#light-overlay');
+        $overlay.removeClass('light-overlay-warm light-overlay-cool light-overlay-mixed');
+
+        if (mode === 'warm') {
+          $overlay.addClass('light-overlay-warm');
+        } else if (mode === 'cool') {
+          $overlay.addClass('light-overlay-cool');
+        } else {
+          $overlay.addClass('light-overlay-mixed');
+        }
+
+        // 如果灯光是开启状态，确保不透明度100%
+        if ($('#btn-light-toggle').hasClass('bg-white')) {
+          $overlay.css('opacity', '1');
+        }
+      });
+
+      // ========== 3. 灯光开关 ==========
+      let lightOn = true;
+      $('#btn-light-toggle').on('click', function() {
+        const $btn = $(this);
+        const $overlay = $('#light-overlay');
+
+        lightOn = !lightOn;
+        if (lightOn) {
+          $btn.addClass('bg-white shadow-sm text-on-surface')
+              .removeClass('text-on-surface-variant');
+          $overlay.css('opacity', '1');
+        } else {
+          $btn.removeClass('bg-white shadow-sm text-on-surface')
+              .addClass('text-on-surface-variant');
+          $overlay.css('opacity', '0');
+        }
+      });
+
+      // ========== 4. 视角切换 ==========
+      let currentView = 'front';
+      $('#btn-view-front').on('click', function() {
+        currentView = 'front';
+        $('#btn-view-front').addClass('bg-white shadow-sm text-on-surface').removeClass('text-on-surface-variant');
+        $('#btn-view-top').removeClass('bg-white shadow-sm text-on-surface').addClass('text-on-surface-variant');
+        // 正面视角 - 恢复正常视图
+        $('#stage-silhouettes').css('transform', 'scale(1) rotateX(0deg)');
+      });
+
+      $('#btn-view-top').on('click', function() {
+        currentView = 'top';
+        $('#btn-view-top').addClass('bg-white shadow-sm text-on-surface').removeClass('text-on-surface-variant');
+        $('#btn-view-front').removeClass('bg-white shadow-sm text-on-surface').addClass('text-on-surface-variant');
+        // 俯视视角 - 压缩模拟俯视效果（实际开发中应替换为真正的俯视图）
+        $('#stage-silhouettes').css('transform', 'scaleY(0.5) rotateX(60deg)');
+      });
+
+      // ========== 5. 全屏按钮 ==========
+      $('#btn-fullscreen').on('click', function() {
+        // 全屏预览功能 - 点击后应实现：
+        // 1. 创建全屏遮罩层，包含放大的舞台预览
+        // 2. 舞台预览占满屏幕，背景为半透明黑色
+        // 3. 右上角显示关闭按钮
+        // 4. 按 ESC 键或点击关闭按钮退出全屏
+        // 5. 保持灯光叠加层、人物剪影等全部元素同步放大
+        console.log('全屏预览功能');
+        alert('全屏预览功能（原型演示）');
+      });
+
+      // ========== 6. 性别比例滑块 ==========
+      $('#gender-ratio').on('input', function() {
+        const value = parseInt($(this).val());
+        let label = '均衡';
+        if (value < 33) label = '男多';
+        else if (value > 67) label = '女多';
+        $('#gender-ratio-label').text(label);
+      });
+
+      // ========== 7. 学段选择 ==========
+      $('#grade-group').on('click', '.grade-btn', function() {
+        const $this = $(this);
+        $('#grade-group .grade-btn').removeClass('bg-primary/10 text-primary')
+          .addClass('bg-surface-container text-on-surface-variant hover:text-on-surface');
+        $this.removeClass('bg-surface-container text-on-surface-variant hover:text-on-surface')
+          .addClass('bg-primary/10 text-primary');
+      });
+
+      // ========== 8. 配色方案卡片选中 ==========
+      $('#scheme-list').on('click', '.scheme-card', function(e) {
+        // 如果点击的是应用按钮，不触发行选中（应用按钮单独处理）
+        if ($(e.target).hasClass('btn-apply-scheme')) return;
+
+        const $card = $(this);
+        $('.scheme-card').removeClass('selected border-primary')
+                        .addClass('border-transparent hover:border-outline-variant/40');
+        $('.scheme-card .bg-primary').find('svg').parent().remove();
+
+        $card.addClass('selected border-primary').removeClass('border-transparent hover:border-outline-variant/40');
+
+        // 添加勾选图标
+        const checkIcon = '<div class="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center"><i data-lucide="check" class="w-3 h-3 text-white"></i></div>';
+        $card.prepend(checkIcon);
+
+        lucide.createIcons();
+
+        // 更新预览区服装颜色（模拟）
+        const schemeName = $card.data('scheme');
+        updatePreviewColors(schemeName);
+      });
+
+      // 更新预览区服装颜色（模拟切换）
+      function updatePreviewColors(schemeName) {
+        // 此功能 - 根据方案更新人物服装颜色
+        // 实际开发中应根据方案配色方案的具体颜色值更新 SVG 中的 fill 属性
+        console.log('切换到配色方案:', schemeName);
+        // 原型中保持现有颜色，实际开发需根据方案数据更新
+      }
+
+      // ========== 9. 应用此方案按钮 ==========
+      $('#scheme-list').on('click', '.btn-apply-scheme', function(e) {
+        e.stopPropagation();
+        const $card = $(this).closest('.scheme-card');
+        // 触发卡片点击（选中）
+        $card.trigger('click');
+
+        // 滚动到预览区
+        $('html, body').animate({
+          scrollTop: $('#stage-preview').offset().top - 100
+        }, 300);
+      });
+
+      // ========== 10. 生成推荐按钮 ==========
+      $('#btn-generate').on('click', function() {
+        const $btn = $(this);
+        const originalText = $btn.html();
+
+        // 加载状态
+        $btn.prop('disabled', true).html('<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> 生成中...');
+        lucide.createIcons();
+
+        // 模拟生成延迟
+        setTimeout(function() {
+          $btn.prop('disabled', false).html(originalText);
+          lucide.createIcons();
+          console.log('配色方案生成完成');
+        }, 1500);
+      });
+
+      // ========== 11. 使用这套配色 - 跳转到智能选款 ==========
+      $('#btn-use-scheme').on('click', function() {
+        const selectedScheme = $('.scheme-card.selected').data('scheme') || 'spring-mint';
+        const bgColor = state.bgColor;
+        const lightMode = state.lightMode;
+        const programType = $('#program-type').val();
+        const genderRatio = $('#gender-ratio').val();
+        const grade = $('.grade-btn.bg-primary\\/10').data('grade');
+
+        // 跳转到智能选款页，带上配色参数
+        window.location.href = `costume.html?scheme=${selectedScheme}&bgColor=${encodeURIComponent(bgColor)}&light=${lightMode}&type=${programType}&ratio=${genderRatio}&grade=${grade}`;
+      });
+
+      // ========== 12. 节目类型变化 - 更新推荐方案标签高亮 ==========
+      $('#program-type').on('change', function() {
+        const type = $(this).val();
+        console.log('节目类型变化:', type);
+        // 实际开发中应根据节目类型重新排序/筛选推荐方案
+        // 原型中保持现有方案列表
+      });
+    });
+  </script>
+</body>
+
+</html>

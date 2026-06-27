@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 字体 -->
+  <link href="https://fonts.googleapis.cn/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 — 莫兰迪·浅薄荷绿 + 暖米 === */
+      --color-primary:              #7fa89a;   /* 薄荷青灰，主色 */
+      --color-primary-soft:         #a8c5b8;   /* 浅薄荷，装饰 */
+      --color-primary-deep:         #5a7a70;   /* 深薄荷，标题/重点 */
+      --color-primary-container:    #dce9e0;   /* 主色容器 */
+      --color-on-primary:           #ffffff;
+      --color-accent:               #c9a87c;   /* 暖金棕，点缀 */
+      --color-accent-soft:          #e8d5b7;   /* 浅金 */
+      --color-rose:                 #c98b8b;   /* 豆沙粉，舞蹈主题 */
+      --color-indigo:               #6b7a8f;   /* 灰蓝，民乐主题 */
+
+      /* === 背景 / 表面 — 暖米色系 === */
+      --color-background:                 #f7f4ee;  /* 米白底色 */
+      --color-surface-container-lowest:   #faf7f1;  /* 最浅 */
+      --color-surface:                    #ffffff;  /* 卡片白 */
+      --color-surface-container:          #efeae0;  /* 输入框/容器 */
+      --color-surface-container-high:     #e5ded0;  /* 较深容器 */
+      --color-surface-container-highest:  #d8cfbe;  /* 最深容器 */
+
+      /* === 文字 === */
+      --color-on-surface:           #3d3a33;   /* 深暖灰主文字 */
+      --color-on-surface-variant:   #7a7568;   /* 次文字 */
+      --color-on-surface-soft:      #a39d8e;   /* 最次文字 */
+
+      /* === 功能色 === */
+      --color-success:  #6b9e7a;
+      --color-error:    #c97b6b;
+      --color-warning:  #d4a85a;
+
+      /* === 边框 === */
+      --color-outline:          #c8c0ad;
+      --color-outline-variant:  #d8d1c0;
+
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.625rem;
+      --radius-lg:   1rem;
+      --radius-xl:   1.5rem;
+      --radius-2xl:  2rem;
+      --radius-full: 9999px;
+
+      /* === 阴影 === */
+      --shadow-card:   0 2px 12px rgba(61,58,51,0.06);
+      --shadow-float:  0 12px 32px rgba(61,58,51,0.08);
+      --shadow-dialog: 0 28px 60px rgba(61,58,51,0.12);
+
+      /* === 字体 === */
+      --font-serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --font-sans: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    .font-serif { font-family: var(--font-serif); }
+    .font-sans { font-family: var(--font-sans); }
+
+    /* Hero 水彩晕染背景 */
+    .hero-watercolor {
+      background-image:
+        radial-gradient(ellipse 55% 60% at 15% 25%, rgba(168,197,184,0.45) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 50% at 85% 15%, rgba(232,213,183,0.4) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 45% at 75% 85%, rgba(201,139,139,0.2) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 35% at 10% 80%, rgba(168,197,184,0.25) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 50% 50%, rgba(247,244,238,0.3) 0%, transparent 70%);
+    }
+
+    /* 玻璃拟态卡片 */
+    .glass-card {
+      background: rgba(255,255,255,0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    /* 民乐主题卡渐变 */
+    .minyue-gradient {
+      background: linear-gradient(135deg, rgba(107,122,143,0.15) 0%, rgba(168,197,184,0.2) 50%, rgba(201,168,124,0.15) 100%);
+    }
+
+    /* 舞蹈主题卡渐变 */
+    .wudao-gradient {
+      background: linear-gradient(135deg, rgba(201,139,139,0.18) 0%, rgba(232,213,183,0.2) 50%, rgba(168,197,184,0.15) 100%);
+    }
+
+    /* 装饰性水彩晕染色块 */
+    .watercolor-blob-1 {
+      background: radial-gradient(circle, rgba(168,197,184,0.3) 0%, transparent 70%);
+    }
+    .watercolor-blob-2 {
+      background: radial-gradient(circle, rgba(201,139,139,0.2) 0%, transparent 70%);
+    }
+    .watercolor-blob-3 {
+      background: radial-gradient(circle, rgba(232,213,183,0.3) 0%, transparent 70%);
+    }
+
+    /* 功能卡悬停效果 */
+    .feature-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(61,58,51,0.1);
+    }
+
+    /* 场景标签悬停 */
+    .scene-tag {
+      transition: all 0.25s ease;
+    }
+    .scene-tag:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(61,58,51,0.08);
+    }
+
+    /* 流程连接线 */
+    .flow-connector {
+      position: absolute;
+      top: 40px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--color-primary-soft), var(--color-accent-soft));
+      opacity: 0.5;
+    }
+
+    /* CTA 区域背景 */
+    .cta-watercolor {
+      background-image:
+        radial-gradient(ellipse 50% 60% at 30% 50%, rgba(168,197,184,0.4) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 55% at 70% 50%, rgba(201,139,139,0.25) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 50% 100%, rgba(232,213,183,0.3) 0%, transparent 60%);
+    }
+
+    /* 滚动渐显动画（初始态） */
+    .fade-in-up {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in-up.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 页脚背景 */
+    .footer-bg {
+      background: linear-gradient(180deg, var(--color-surface-container-lowest) 0%, var(--color-surface-container) 100%);
+    }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans">
+
+  <!-- @nav:start 导航组件 -->
+  <header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
+    <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+      <a href="home.html" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+          <i data-lucide="music" class="w-4 h-4 text-primary-deep"></i>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="font-serif text-lg font-semibold text-on-surface">艺演助手</span>
+          <span class="text-[10px] text-on-surface-variant tracking-wider">STAGEOS · 舞台演出智能规划</span>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-1">
+        <a href="home.html" class="px-3.5 py-2 text-sm font-medium text-primary bg-primary/10 rounded-md transition-colors" aria-current="page">首页</a>
+        <a href="costume.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">智能选款</a>
+        <a href="color.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">配色方案</a>
+        <a href="formation.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">队形预览</a>
+        <a href="about.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">关于我们</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="costume.html" id="nav-cta-btn" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity shadow-sm">
+          立即体验
+        </a>
+      </div>
+    </div>
+  </header>
+  <!-- @nav:end 导航组件 -->
+
+  <main>
+    <!-- @main-content:start -->
+
+    <!-- ==================== Hero 区 ==================== -->
+    <section class="relative w-full hero-watercolor overflow-hidden">
+      <div class="max-w-7xl mx-auto px-6 pt-16 pb-24 md:pt-20 md:pb-32 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <!-- 左侧：品牌大标题 -->
+          <div class="space-y-8 fade-in-up">
+            <!-- 品牌小标签 -->
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface/60 backdrop-blur-sm border border-white/40 shadow-sm">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-accent"></i>
+              <span class="text-xs font-medium text-on-surface-variant">AI 智能服装规划平台</span>
+            </div>
+            <!-- 主标题 -->
+            <h1 class="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-on-surface leading-tight">
+              让每个孩子的舞台，
+              <br/>
+              <span class="text-primary-deep">都被认真对待</span>
+            </h1>
+            <!-- 副标题 -->
+            <p class="text-base md:text-lg text-on-surface-variant max-w-lg leading-relaxed">
+              面向中小学舞台演出的 AI 智能服装规划平台。
+              <br class="hidden md:block"/>
+              融合民乐与舞蹈双主题美学，从选款、配色到队形规划，
+              <br class="hidden md:block"/>
+              一站式打造专属于孩子们的舞台光彩。
+            </p>
+            <!-- CTA 按钮组 -->
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button id="hero-primary-btn" class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary px-7 py-3.5 rounded-xl text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+                立即体验
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+              <button id="hero-secondary-btn" class="inline-flex items-center justify-center gap-2 bg-surface/70 backdrop-blur-sm text-on-surface px-7 py-3.5 rounded-xl text-sm font-medium hover:bg-surface transition-colors border border-white/50">
+                了解更多
+                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <!-- 信任小标签 -->
+            <div class="flex items-center gap-6 pt-2">
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="shield-check" class="w-4 h-4 text-success"></i>
+                <span class="text-xs text-on-surface-variant">数据安全合规</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="users" class="w-4 h-4 text-primary"></i>
+                <span class="text-xs text-on-surface-variant">已服务 500+ 学校</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <i data-lucide="award" class="w-4 h-4 text-accent"></i>
+                <span class="text-xs text-on-surface-variant">专业艺术指导</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 右侧：双主题视觉卡 -->
+          <div class="relative h-[420px md:h-[500px] fade-in-up" style="transition-delay: 0.15s">
+            <!-- 民乐主题卡（左上） -->
+            <div class="absolute top-0 left-0 w-[280px md:w-[320px] h-[340px] md:h-[380px] rounded-2xl shadow-float overflow-hidden z-20 minyue-gradient backdrop-blur-sm border border-white/40">
+              <div class="p-6 h-full flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center gap-2 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-white/60 flex items-center justify-center">
+                      <i data-lucide="music" class="w-5 h-5 text-indigo"></i>
+                    </div>
+                    <span class="text-sm font-medium text-indigo">民乐主题</span>
+                  </div>
+                  <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">丝竹悠扬</h3>
+                  <p class="text-sm text-on-surface-variant text-xs leading-relaxed">
+                    二胡、笛子、古筝、琵琶...
+                    <br/>
+                    传承东方雅韵之美
+                  </p>
+                </div>
+                <!-- 抽象乐器意象装饰 -->
+                <div class="relative h-32 flex items-center justify-center">
+                  <div class="relative">
+                    <!-- 抽象的曲线装饰 -->
+                    <svg width="160" height="100" viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 80 Q 40 20, 60 50 T 100 30 T 140 60" stroke="rgba(107,122,143,0.6)" stroke-width="2" fill="none" stroke-linecap="round"/>
+                      <path d="M30 90 Q 50 30, 70 60 T 110 40 T 150 70" stroke="rgba(168,197,184,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                      <circle cx="20" cy="80" r="4" fill="rgba(201,168,124,0.8)"/>
+                      <circle cx="80" cy="40" r="3" fill="rgba(107,122,143,0.7)"/>
+                      <circle cx="140" cy="60" r="4" fill="rgba(168,197,184,0.8)"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs text-on-surface-soft">12+ 民族乐器</span>
+                  <i data-lucide="arrow-up-right" class="w-4 h-4 text-on-surface-soft"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- 舞蹈主题卡（右下） -->
+            <div class="absolute bottom-0 right-0 w-[280px] md:w-[320px] h-[340px] md:h-[380px] rounded-2xl shadow-float overflow-hidden z-10 wudao-gradient backdrop-blur-sm border border-white/40">
+              <div class="p-6 h-full flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center gap-2 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-white/60 flex items-center justify-center">
+                      <i data-lucide="flower-2" class="w-5 h-5 text-rose"></i>
+                    </div>
+                    <span class="text-sm font-medium text-rose">舞蹈主题</span>
+                  </div>
+                  <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">霓裳羽衣</h3>
+                  <p class="text-sm text-on-surface-variant text-xs leading-relaxed">
+                    古典舞、民族舞、现代舞...
+                    <br/>
+                    裙摆飞扬的诗意表达
+                  </p>
+                </div>
+                <!-- 舞袖意象装饰 -->
+                <div class="relative h-32 flex items-center justify-center">
+                  <svg width="160" height="100" viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M80 10 C 50 30, 30 60, 80 90 C 130 60, 110 30, 80 10" stroke="rgba(201,139,139,0.4)" stroke-width="2" fill="rgba(201,139,139,0.15)"/>
+                    <path d="M80 20 C 60 35, 45 55, 80 80 C 115 55, 100 35, 80 20" stroke="rgba(232,213,183,0.5)" stroke-width="1.5" fill="rgba(232,213,183,0.2)"/>
+                    <circle cx="80" cy="10" r="3" fill="rgba(201,168,124,0.8)"/>
+                  </svg>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs text-on-surface-soft">15+ 舞蹈类型</span>
+                  <i data-lucide="arrow-up-right" class="w-4 h-4 text-on-surface-soft"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- 装饰性浮动元素 -->
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-accent-soft/30 blur-2xl z-0"></div>
+          </div>
+        </div>
+      </div>
+      <!-- 底部波浪分隔 -->
+      <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent pointer-events-none"></div>
+    </section>
+
+    <!-- ==================== 核心价值区 ==================== -->
+    <section class="max-w-7xl mx-auto px-6 py-20 md:py-28">
+      <div class="text-center mb-14 fade-in-up">
+        <span class="inline-block text-xs font-medium text-primary tracking-wider uppercase mb-3">CORE VALUES</span>
+        <h2 class="font-serif text-3xl md:text-4xl font-bold text-on-surface mb-4">为什么选择艺演助手</h2>
+        <p class="text-on-surface-variant max-w-2xl mx-auto">
+          专为中小学舞台演出场景打造，从专业选款到安全保障，全方位守护每一场精彩演出</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- 核心价值-1：专业AI选款 -->
+        <div id="value-card-ai" class="feature-card bg-surface rounded-2xl p-6 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.05s">
+          <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+            <i data-lucide="brain-circuit" class="w-6 h-6 text-primary-deep"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-on-surface mb-2">专业 AI 选款</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            基于 20+ 节目类型智能推荐，结合演出主题、风格、预算多维度匹配，让选款不再凭感觉。
+          </p>
+        </div>
+
+        <!-- 核心价值-2：全尺码覆盖 -->
+        <div id="value-card-size" class="feature-card bg-surface rounded-2xl p-6 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.1s">
+          <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4">
+            <i data-lucide="ruler" class="w-6 h-6 text-accent"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-on-surface mb-2">全尺码覆盖</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            小学 1-6 年级完整尺码体系，特殊体型智能适配，每个孩子都有合身的演出服。
+          </p>
+        </div>
+
+        <!-- 核心价值-3：背景不撞色 -->
+        <div id="value-card-color" class="feature-card bg-surface rounded-2xl p-6 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.15s">
+          <div class="w-12 h-12 rounded-xl bg-rose/10 flex items-center justify-center mb-4">
+            <i data-lucide="palette" class="w-6 h-6 text-rose"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-on-surface mb-2">背景不撞色</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            大屏背景色智能检测与修正，实时预览服装在舞台背景下的视觉效果。
+          </p>
+        </div>
+
+        <!-- 核心价值-4：一键采购清单 -->
+        <div id="value-card-purchase" class="feature-card bg-surface rounded-2xl p-6 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.2s">
+          <div class="w-12 h-12 rounded-xl bg-indigo/10 flex items-center justify-center mb-4">
+            <i data-lucide="shopping-cart" class="w-6 h-6 text-indigo"></i>
+          </div>
+          <h3 class="font-serif text-lg font-semibold text-on-surface mb-2">一键采购清单</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            自动比价多平台，直达购买链接，尺码数量清晰明了，采购效率提升 80%。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 功能展示区 ==================== -->
+    <section id="features-section" class="bg-surface-container-lowest py-20 md:py-28 relative overflow-hidden">
+      <!-- 背景装饰水彩 -->
+      <div class="absolute top-20 right-20 w-64 h-64 watercolor-blob-1 pointer-events-none"></div>
+      <div class="absolute bottom-20 left-20 w-48 h-48 watercolor-blob-2 pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-14 fade-in-up">
+          <span class="inline-block text-xs font-medium text-primary tracking-wider uppercase mb-3">FEATURES</span>
+          <h2 class="font-serif text-3xl md:text-4xl font-bold text-on-surface mb-4">六大核心能力</h2>
+          <p class="text-on-surface-variant max-w-2xl mx-auto">
+            从创意构思到现场呈现，AI 全流程辅助你完成一场完美的舞台演出规划</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- 功能卡-1：智能选款 -->
+          <div id="feature-card-costume" class="feature-card bg-surface rounded-2xl p-7 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.05s">
+            <div class="flex items-start justify-between mb-5">
+              <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <i data-lucide="shirt" class="w-6 h-6 text-primary-deep"></i>
+              </div>
+              <i data-lucide="arrow-up-right" class="w-5 h-5 text-on-surface-soft"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">智能选款</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+              根据节目类型、主题风格、预算范围，AI 智能推荐最合适的演出服装款式与配饰搭配。
+            </p>
+            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+              了解更多
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </span>
+          </div>
+
+          <!-- 功能卡-2：配色方案 -->
+          <div id="feature-card-color" class="feature-card bg-surface rounded-2xl p-7 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.1s">
+            <div class="flex items-start justify-between mb-5">
+              <div class="w-12 h-12 rounded-xl bg-rose/10 flex items-center justify-center">
+                <i data-lucide="palette" class="w-6 h-6 text-rose"></i>
+              </div>
+              <i data-lucide="arrow-up-right" class="w-5 h-5 text-on-surface-soft"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">配色方案</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+              专业色彩学算法分析舞台背景与灯光，智能推荐服装配色，避免撞色尴尬。
+            </p>
+            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+              了解更多
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </span>
+          </div>
+
+          <!-- 功能卡-3：队形规划 -->
+          <div id="feature-card-formation" class="feature-card bg-surface rounded-2xl p-7 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.15s">
+            <div class="flex items-start justify-between mb-5">
+              <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
+                <i data-lucide="layout-grid" class="w-6 h-6 text-accent"></i>
+              </div>
+              <i data-lucide="arrow-up-right" class="w-5 h-5 text-on-surface-soft"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">队形规划</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+              弧形、直线、阶梯、星形等多种队形模板，根据人数自动调整，可视化排布。
+            </p>
+            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+              了解更多
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </span>
+          </div>
+
+          <!-- 功能卡-4：2D预览 -->
+          <div id="feature-card-preview" class="feature-card bg-surface rounded-2xl p-7 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.2s">
+            <div class="flex items-start justify-between mb-5">
+              <div class="w-12 h-12 rounded-xl bg-indigo/10 flex items-center justify-center">
+                <i data-lucide="eye" class="w-6 h-6 text-indigo"></i>
+              </div>
+              <i data-lucide="arrow-up-right" class="w-5 h-5 text-on-surface-soft"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">2D 预览</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+              同身高比例真实还原，从舞台视角预览整体视觉效果，提前发现问题。
+            </p>
+            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+              了解更多
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </span>
+          </div>
+
+          <!-- 功能卡-5：3D试装 -->
+          <div id="feature-card-3d" class="feature-card bg-surface rounded-2xl p-7 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.25s">
+            <div class="flex items-start justify-between mb-5">
+              <div class="w-12 h-12 rounded-xl bg-primary-soft/20 flex items-center justify-center">
+              <i data-lucide="box" class="w-6 h-6 text-primary-deep"></i>
+              </div>
+              <i data-lucide="arrow-up-right" class="w-5 h-5 text-on-surface-soft"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">3D 试装</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+              360 度立体展示服装上身效果，面料质感、垂坠感一目了然。
+            </p>
+            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+              了解更多
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </span>
+          </div>
+
+          <!-- 功能卡-6：采购清单 -->
+          <div id="feature-card-purchase" class="feature-card bg-surface rounded-2xl p-7 shadow-card cursor-pointer border border-outline-variant/10 fade-in-up" style="transition-delay: 0.3s">
+            <div class="flex items-start justify-between mb-5">
+              <div class="w-12 h-12 rounded-xl bg-success/10 flex items-center justify-center">
+                <i data-lucide="clipboard-list" class="w-6 h-6 text-success"></i>
+              </div>
+              <i data-lucide="arrow-up-right" class="w-5 h-5 text-on-surface-soft"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">采购清单</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-4">
+              自动生成采购清单，多平台比价，一键导出分享，采购省心省力。
+            </p>
+            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
+              了解更多
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 场景覆盖区 ==================== -->
+    <section class="max-w-7xl mx-auto px-6 py-20 md:py-28">
+      <div class="text-center mb-14 fade-in-up">
+        <span class="inline-block text-xs font-medium text-primary tracking-wider uppercase mb-3">SCENARIOS</span>
+        <h2 class="font-serif text-3xl md:text-4xl font-bold text-on-surface mb-4">覆盖 20+ 演出场景</h2>
+        <p class="text-on-surface-variant max-w-2xl mx-auto">
+          无论是班级联欢会、校园艺术节、国庆汇演、比赛展演，全场景覆盖</p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
+        <!-- 场景-合唱 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="合唱" style="transition-delay: 0.02s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-3">
+            <i data-lucide="users" class="w-5 h-5 text-primary-deep"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">合唱</span>
+        </div>
+
+        <!-- 场景-群舞 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="群舞" style="transition-delay: 0.04s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-rose/10 flex items-center justify-center mb-3">
+            <i data-lucide="flower-2" class="w-5 h-5 text-rose"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">群舞</span>
+        </div>
+
+        <!-- 场景-独奏 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="独奏" style="transition-delay: 0.06s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-indigo/10 flex items-center justify-center mb-3">
+            <i data-lucide="music" class="w-5 h-5 text-indigo"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">独奏</span>
+        </div>
+
+        <!-- 场景-朗诵 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="朗诵" style="transition-delay: 0.08s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-3">
+            <i data-lucide="mic" class="w-5 h-5 text-accent"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">朗诵</span>
+        </div>
+
+        <!-- 场景-主持 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="主持" style="transition-delay: 0.1s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-3">
+            <i data-lucide="mic-2" class="w-5 h-5 text-primary-deep"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">主持</span>
+        </div>
+
+        <!-- 场景-礼仪 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="礼仪" style="transition-delay: 0.12s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-rose/10 flex items-center justify-center mb-3">
+            <i data-lucide="award" class="w-5 h-5 text-rose"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">礼仪</span>
+        </div>
+
+        <!-- 场景-戏曲 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="戏曲" style="transition-delay: 0.14s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-accent/10 flex items-center justify-center mb-3">
+            <i data-lucide="theater" class="w-5 h-5 text-accent"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">戏曲</span>
+        </div>
+
+        <!-- 场景-民乐合奏 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="民乐合奏" style="transition-delay: 0.16s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-indigo/10 flex items-center justify-center mb-3">
+            <i data-lucide="guitar" class="w-5 h-5 text-indigo"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">民乐合奏</span>
+        </div>
+
+        <!-- 场景-芭蕾舞 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="芭蕾舞" style="transition-delay: 0.18s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-primary-soft/20 flex items-center justify-center mb-3">
+            <i data-lucide="sparkles" class="w-5 h-5 text-primary-deep"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">芭蕾舞</span>
+        </div>
+
+        <!-- 场景-武术 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="武术" style="transition-delay: 0.2s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-success/10 flex items-center justify-center mb-3">
+            <i data-lucide="sword" class="w-5 h-5 text-success"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">武术</span>
+        </div>
+
+        <!-- 场景-情景剧 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="情景剧" style="transition-delay: 0.22s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-rose/10 flex items-center justify-center mb-3">
+            <i data-lucide="clapperboard" class="w-5 h-5 text-rose"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface">情景剧</span>
+        </div>
+
+        <!-- 场景-更多 -->
+        <div class="scene-tag bg-surface rounded-xl p-5 shadow-sm border border-outline-variant/10 cursor-pointer text-center fade-in-up" data-scene="更多" style="transition-delay: 0.24s">
+          <div class="w-10 h-10 mx-auto rounded-full bg-surface-container flex items-center justify-center mb-3">
+            <i data-lucide="more-horizontal" class="w-5 h-5 text-on-surface-variant"></i>
+          </div>
+          <span class="text-sm font-medium text-on-surface-variant">更多场景</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 使用流程区 ==================== -->
+    <section class="bg-surface-container-lowest py-20 md:py-28 relative overflow-hidden">
+      <div class="absolute top-1/3 left-10 w-56 h-56 watercolor-blob-3 pointer-events-none"></div>
+      <div class="absolute bottom-10 right-10 w-48 h-48 watercolor-blob-1 pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="text-center mb-16 fade-in-up">
+        <span class="inline-block text-xs font-medium text-primary tracking-wider uppercase mb-3">HOW IT WORKS</span>
+        <h2 class="font-serif text-3xl md:text-4xl font-bold text-on-surface mb-4">三步开启你的智能演出规划</h2>
+        <p class="text-on-surface-variant max-w-2xl mx-auto">
+          简单三步，从构思到落地，AI 全程陪伴</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <!-- 连接线（仅大屏显示） -->
+        <div class="hidden md:block absolute top-20 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-primary-soft via-accent-soft to-rose/50 z-0"></div>
+
+        <!-- Step 1 -->
+        <div class="relative z-10 text-center fade-in-up" style="transition-delay: 0.05s">
+          <div class="w-20 h-20 mx-auto rounded-full bg-surface shadow-float flex items-center justify-center mb-6 border-4 border-surface-container-lowest">
+            <span class="font-serif text-3xl font-bold text-primary">01</span>
+          </div>
+          <div class="bg-surface rounded-2xl p-6 shadow-card border border-outline-variant/10">
+            <div class="w-12 h-12 mx-auto rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+              <i data-lucide="file-text" class="w-6 h-6 text-primary-deep"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">输入信息</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed">
+              填写节目类型、学生信息、舞台环境、预算偏好，简单表单清晰明了。
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative z-10 text-center fade-in-up" style="transition-delay: 0.15s">
+          <div class="w-20 h-20 mx-auto rounded-full bg-surface shadow-float flex items-center justify-center mb-6 border-4 border-surface-container-lowest">
+            <span class="font-serif text-3xl font-bold text-accent">02</span>
+          </div>
+          <div class="bg-surface rounded-2xl p-6 shadow-card border border-outline-variant/10">
+            <div class="w-12 h-12 mx-auto rounded-xl bg-accent/10 flex items-center justify-center mb-4">
+              <i data-lucide="sparkles" class="w-6 h-6 text-accent"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">AI 生成方案</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed">
+              智能推荐服装款式、配色方案、队形排布，2D/3D 预览效果。
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="relative z-10 text-center fade-in-up" style="transition-delay: 0.25s">
+          <div class="w-20 h-20 mx-auto rounded-full bg-surface shadow-float flex items-center justify-center mb-6 border-4 border-surface-container-lowest">
+            <span class="font-serif text-3xl font-bold text-rose">03</span>
+          </div>
+          <div class="bg-surface rounded-2xl p-6 shadow-card border border-outline-variant/10">
+            <div class="w-12 h-12 mx-auto rounded-xl bg-rose/10 flex items-center justify-center mb-4">
+              <i data-lucide="shopping-bag" class="w-6 h-6 text-rose"></i>
+            </div>
+            <h3 class="font-serif text-xl font-semibold text-on-surface mb-2">确认下单</h3>
+            <p class="text-sm text-on-surface-variant leading-relaxed">
+              一键导出采购清单，尺码数量清晰，多平台比价直达购买。
+            </p>
+          </div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- ==================== 信任区 ==================== -->
+    <section class="max-w-7xl mx-auto px-6 py-20 md:py-28">
+      <div class="text-center mb-14 fade-in-up">
+        <span class="inline-block text-xs font-medium text-primary tracking-wider uppercase mb-3">TRUST & SAFETY</span>
+        <h2 class="font-serif text-3xl md:text-4xl font-bold text-on-surface mb-4">安全放心，专业保障</h2>
+        <p class="text-on-surface-variant max-w-2xl mx-auto">
+          我们深知校园场景的特殊性，把孩子的安全与隐私始终放在第一位</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- 信任-数据匿名化 -->
+        <div class="bg-surface rounded-2xl p-8 shadow-card border border-outline-variant/10 fade-in-up" style="transition-delay: 0.05s">
+          <div class="w-14 h-14 rounded-2xl bg-success/10 flex items-center justify-center mb-5">
+            <i data-lucide="shield-check" class="w-7 h-7 text-success"></i>
+          </div>
+          <h3 class="font-serif text-xl font-semibold text-on-surface mb-3">数据匿名化处理</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            所有学生数据均做匿名化处理，不上传学生真实照片，仅使用身高、体重等体型参数用于尺码推荐。
+          </p>
+        </div>
+
+        <!-- 信任-隐私保护 -->
+        <div class="bg-surface rounded-2xl p-8 shadow-card border border-outline-variant/10 fade-in-up" style="transition-delay: 0.1s">
+          <div class="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-5">
+            <i data-lucide="lock" class="w-7 h-7 text-primary-deep"></i>
+          </div>
+          <h3 class="font-serif text-xl font-semibold text-on-surface mb-3">符合教育部校园数据安全标准</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            严格遵循教育部《中小学数字校园安全规范》，数据加密存储，定期安全审计，保障校园数据安全无忧。
+          </p>
+        </div>
+
+        <!-- 信任-专业背书 -->
+        <div class="bg-surface rounded-2xl p-8 shadow-card border border-outline-variant/10 fade-in-up" style="transition-delay: 0.15s">
+          <div class="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center mb-5">
+            <i data-lucide="medal" class="w-7 h-7 text-accent"></i>
+          </div>
+          <h3 class="font-serif text-xl font-semibold text-on-surface mb-3">一线艺术指导教师参与训练</h3>
+          <p class="text-sm text-on-surface-variant leading-relaxed">
+            资深中小学艺术指导教师团队深度参与 AI 训练，推荐方案兼具专业审美与实操可行性。
+          </p>
+        </div>
+      </div>
+
+      <!-- 合作学校/机构展示 -->
+      <div class="mt-16 text-center fade-in-up" style="transition-delay: 0.2s">
+        <p class="text-xs text-on-surface-soft tracking-wider mb-8">已为 500+ 学校提供演出规划服务</p>
+        <div class="flex flex-wrap justify-center gap-x-12 gap-y-6 items-center opacity-60">
+          <div class="flex items-center gap-2">
+            <i data-lucide="school" class="w-5 h-5 text-on-surface-variant"></i>
+            <span class="text-sm text-on-surface-variant font-medium">市重点第一小学</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="school" class="w-5 h-5 text-on-surface-variant"></i>
+            <span class="text-sm text-on-surface-variant font-medium">阳光实验学校</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="school" class="w-5 h-5 text-on-surface-variant"></i>
+            <span class="text-sm text-on-surface-variant font-medium">东方艺术小学</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="school" class="w-5 h-5 text-on-surface-variant"></i>
+            <span class="text-sm text-on-surface-variant font-medium">新华路小学</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="school" class="w-5 h-5 text-on-surface-variant"></i>
+            <span class="text-sm text-on-surface-variant font-medium">明德中学</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CTA 区 ==================== -->
+    <section class="relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-6 py-20 md:py-28 relative z-10">
+        <div class="cta-watercolor rounded-3xl p-10 md:p-16 text-center relative overflow-hidden border border-white/40 fade-in-up">
+          <h2 class="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-on-surface mb-4">
+            准备好开启你的第一次
+            <br class="hidden md:block"/>
+            <span class="text-primary-deep">智能演出规划</span>了吗？
+          </h2>
+          <p class="text-on-surface-variant max-w-xl mx-auto mb-8 text-base md:text-lg">
+            免费体验，无需注册，30 秒生成你的第一套方案
+          </p>
+          <button id="cta-main-btn" class="inline-flex items-center justify-center gap-2 bg-primary text-on-primary px-8 py-4 rounded-xl text-base font-medium hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-primary/20">
+            开始规划
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 页脚 ==================== -->
+    <footer class="footer-bg border-t border-outline-variant/20">
+      <div class="max-w-7xl mx-auto px-6 py-14">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+          <!-- 左侧：品牌 Logo + Slogan -->
+          <div class="md:col-span-1">
+            <div class="flex items-center gap-2.5 mb-4">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <i data-lucide="music" class="w-5 h-5 text-primary-deep"></i>
+              </div>
+              <div class="flex flex-col leading-tight">
+                <span class="font-serif text-lg font-semibold text-on-surface">艺演助手</span>
+                <span class="text-[10px] text-on-surface-variant tracking-wider">STAGEOS</span>
+              </div>
+            </div>
+            <p class="text-sm text-on-surface-variant leading-relaxed mb-5">
+              让每个孩子的舞台，都被认真对待。<br/>
+              AI 智能服装规划平台，专为中小学舞台演出打造。
+            </p>
+            <div class="flex gap-3">
+              <a href="#" class="w-9 h-9 rounded-full bg-surface flex items-center justify-center hover:bg-surface-container transition-colors">
+                <i data-lucide="wechat" class="w-4 h-4 text-on-surface-variant"></i>
+              </a>
+              <a href="#" class="w-9 h-9 rounded-full bg-surface flex items-center justify-center hover:bg-surface-container transition-colors">
+                <i data-lucide="mail" class="w-4 h-4 text-on-surface-variant"></i>
+              </a>
+              <a href="#" class="w-9 h-9 rounded-full bg-surface flex items-center justify-center hover:bg-surface-container transition-colors">
+                <i data-lucide="phone" class="w-4 h-4 text-on-surface-variant"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- 中间左：产品链接 -->
+          <div>
+            <h4 class="text-sm font-semibold text-on-surface mb-4">产品功能</h4>
+            <ul class="space-y-2.5">
+              <li><a href="costume.html" class="text-sm text-on-surface-variant hover:text-primary transition-colors">智能选款</a></li>
+              <li><a href="color.html" class="text-sm text-on-surface-variant hover:text-primary transition-colors">配色方案</a></li>
+              <li><a href="formation.html" class="text-sm text-on-surface-variant hover:text-primary transition-colors">队形预览</a></li>
+              <li><a href="about.html" class="text-sm text-on-surface-variant hover:text-primary transition-colors">使用指南</a></li>
+            </ul>
+          </div>
+
+          <!-- 中间右：关于我们 -->
+          <div>
+            <h4 class="text-sm font-semibold text-on-surface mb-4">关于我们</h4>
+            <ul class="space-y-2.5">
+              <li><a href="about.html" class="text-sm text-on-surface-variant hover:text-primary transition-colors">品牌故事</a></li>
+              <li><a href="about.html#faq" class="text-sm text-on-surface-variant hover:text-primary transition-colors">常见问题</a></li>
+              <li><a href="about.html#contact" class="text-sm text-on-surface-variant hover:text-primary transition-colors">联系我们</a></li>
+              <li><a href="about.html#privacy" class="text-sm text-on-surface-variant hover:text-primary transition-colors">隐私政策</a></li>
+            </ul>
+          </div>
+
+          <!-- 右侧：联系方式 -->
+          <div>
+            <h4 class="text-sm font-semibold text-on-surface mb-4">联系方式</h4>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="mail" class="w-4 h-4 text-on-surface-soft mt-0.5 shrink-0"></i>
+                <span class="text-sm text-on-surface-variant">contact@stageos.cn</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="phone" class="w-4 h-4 text-on-surface-soft mt-0.5 shrink-0"></i>
+                <span class="text-sm text-on-surface-variant">400-888-6666</span>
+              </li>
+              <li class="flex items-start gap-2.5">
+                <i data-lucide="map-pin" class="w-4 h-4 text-on-surface-soft mt-0.5 shrink-0"></i>
+                <span class="text-sm text-on-surface-variant">北京市海淀区中关村科技园</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 底部版权 -->
+        <div class="mt-12 pt-6 border-t border-outline-variant/20 flex flex-col md:flex-row justify-between items-center gap-3">
+          <p class="text-xs text-on-surface-soft">© 2024 艺演助手 StageOS. All rights reserved.</p>
+          <div class="flex gap-5">
+            <a href="#" class="text-xs text-on-surface-soft hover:text-on-surface-variant transition-colors">用户协议</a>
+            <a href="#" class="text-xs text-on-surface-soft hover:text-on-surface-variant transition-colors">隐私政策</a>
+            <a href="#" class="text-xs text-on-surface-soft hover:text-on-surface-variant transition-colors">京ICP备xxxxxxxx号</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- @main-content:end -->
+  </main>
+
+  <script>lucide.createIcons();</script>
+  <script>
+    $(function(){
+      // 滚动渐显动画
+      // 遍历所有 .fade-in-up 元素，进入视口时添加 .is-visible
+      const fadeElements = $('.fade-in-up');
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            $(entry.target).addClass('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      fadeElements.each(function() {
+        observer.observe(this);
+      });
+
+      // Hero 主 CTA 按钮 - 点击跳转到智能选款页
+      $('#hero-primary-btn').on('click', function() {
+        window.location.href = 'costume.html';
+      });
+
+      // Hero 次 CTA 按钮 - 点击平滑滚动到功能展示区
+      $('#hero-secondary-btn').on('click', function() {
+        const target = $('#features-section');
+        if (target.length) {
+          $('html, body').animate({
+            scrollTop: target.offset().top - 80
+          }, 600);
+        }
+      });
+
+      // 底部大 CTA 按钮 - 点击跳转到智能选款页
+      $('#cta-main-btn').on('click', function() {
+        window.location.href = 'costume.html';
+      });
+
+      // 功能卡片 - 点击跳转到对应功能页
+      // 智能选款卡片
+      $('#feature-card-costume').on('click', function() {
+        window.location.href = 'costume.html';
+      });
+      // 配色方案卡片
+      $('#feature-card-color').on('click', function() {
+        window.location.href = 'color.html';
+      });
+      // 队形规划卡片
+      $('#feature-card-formation').on('click', function() {
+        window.location.href = 'formation.html';
+      });
+      // 2D预览卡片
+      $('#feature-card-preview').on('click', function() {
+        window.location.href = 'formation.html';
+      });
+      // 3D试装卡片 - 复杂功能暂未独立页面，日志记录
+      $('#feature-card-3d').on('click', function() {
+        console.log('3D试装功能：后续应跳转到3D试装独立页面，或在智能选款页内展开3D预览模块');
+      });
+      // 采购清单卡片
+      $('#feature-card-purchase').on('click', function() {
+        window.location.href = 'costume.html';
+      });
+
+      // 场景标签 - 悬停时的交互提示（原型阶段仅日志）
+      $('.scene-tag').on('click', function() {
+        const sceneName = $(this).data('scene');
+        console.log('点击场景标签:', sceneName, ' - 后续应筛选展示该场景下的服装推荐方案');
+      });
+
+      // 核心价值区卡片 - 点击跳转到对应说明
+      $('#value-card-ai').on('click', function() {
+        window.location.href = 'costume.html';
+      });
+      $('#value-card-size').on('click', function() {
+        window.location.href = 'about.html#size-guide';
+      });
+      $('#value-card-color').on('click', function() {
+        window.location.href = 'color.html';
+      });
+      $('#value-card-purchase').on('click', function() {
+        window.location.href = 'costume.html';
+      });
+    });
+  </script>
+</body>
+
+</html>

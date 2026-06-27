@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- 字体 -->
+  <link href="https://fonts.googleapis.cn/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/jquery/jquery-3.7.1.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/lucide/lucide-1.11.0.min.js"></script>
+  <script src="https://lf-code-agent.coze.cn/obj/x-ai-cn/cdn/tailwindcss/tailwindcss-browser-4.2.4.min.js"></script>
+
+  <style type="text/tailwindcss">
+    @theme {
+      /* === 品牌色 — 莫兰迪·浅薄荷绿 + 暖米 === */
+      --color-primary:              #7fa89a;   /* 薄荷青灰，主色 */
+      --color-primary-soft:         #a8c5b8;   /* 浅薄荷，装饰 */
+      --color-primary-deep:         #5a7a70;   /* 深薄荷，标题/重点 */
+      --color-primary-container:    #dce9e0;   /* 主色容器 */
+      --color-on-primary:           #ffffff;
+      --color-accent:               #c9a87c;   /* 暖金棕，点缀 */
+      --color-accent-soft:          #e8d5b7;   /* 浅金 */
+      --color-rose:                 #c98b8b;   /* 豆沙粉，舞蹈主题 */
+      --color-indigo:               #6b7a8f;   /* 灰蓝，民乐主题 */
+
+      /* === 背景 / 表面 — 暖米色系 === */
+      --color-background:                 #f7f4ee;  /* 米白底色 */
+      --color-surface-container-lowest:   #faf7f1;  /* 最浅 */
+      --color-surface:                    #ffffff;  /* 卡片白 */
+      --color-surface-container:          #efeae0;  /* 输入框/容器 */
+      --color-surface-container-high:     #e5ded0;  /* 较深容器 */
+      --color-surface-container-highest:  #d8cfbe;  /* 最深容器 */
+
+      /* === 文字 === */
+      --color-on-surface:           #3d3a33;   /* 深暖灰主文字 */
+      --color-on-surface-variant:   #7a7568;   /* 次文字 */
+      --color-on-surface-soft:      #a39d8e;   /* 最次文字 */
+
+      /* === 功能色 === */
+      --color-success:  #6b9e7a;
+      --color-error:    #c97b6b;
+      --color-warning:  #d4a85a;
+
+      /* === 边框 === */
+      --color-outline:          #c8c0ad;
+      --color-outline-variant:  #d8d1c0;
+
+      /* === 圆角 === */
+      --radius-sm:   0.375rem;
+      --radius-md:   0.625rem;
+      --radius-lg:   1rem;
+      --radius-xl:   1.5rem;
+      --radius-2xl:  2rem;
+      --radius-full: 9999px;
+
+      /* === 阴影 === */
+      --shadow-card:   0 2px 12px rgba(61,58,51,0.06);
+      --shadow-float:  0 12px 32px rgba(61,58,51,0.08);
+      --shadow-dialog: 0 28px 60px rgba(61,58,51,0.12);
+
+      /* === 字体 === */
+      --font-serif: "Noto Serif SC", "Songti SC", "STSong", serif;
+      --font-sans: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    /* 水彩晕染纹理背景 */
+    .watercolor-bg {
+      background-image:
+        radial-gradient(ellipse 60% 50% at 20% 20%, rgba(168,197,184,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 80% 10%, rgba(232,213,183,0.3) 0%, transparent 55%),
+        radial-gradient(ellipse 45% 55% at 70% 80%, rgba(201,139,139,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse 35% 35% at 10% 75%, rgba(168,197,184,0.2) 0%, transparent 55%);
+    }
+
+    /* 服装效果卡水彩背景 */
+    .costume-visual-bg {
+      background-image:
+        radial-gradient(ellipse 55% 45% at 30% 25%, rgba(168,197,184,0.45) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 55% at 75% 60%, rgba(232,213,183,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 35% at 50% 85%, rgba(201,139,139,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse 30% 40% at 15% 70%, rgba(201,168,124,0.2) 0%, transparent 50%);
+    }
+
+    .costume-visual-bg-alt-1 {
+      background-image:
+        radial-gradient(ellipse 55% 45% at 70% 30%, rgba(201,139,139,0.35) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 25% 65%, rgba(232,213,183,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 35% 45% at 60% 80%, rgba(168,197,184,0.25) 0%, transparent 55%);
+    }
+
+    .costume-visual-bg-alt-2 {
+      background-image:
+        radial-gradient(ellipse 50% 45% at 40% 30%, rgba(107,122,143,0.3) 0%, transparent 65%),
+        radial-gradient(ellipse 45% 50% at 70% 70%, rgba(232,213,183,0.35) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 35% at 20% 75%, rgba(168,197,184,0.2) 0%, transparent 55%);
+    }
+
+    /* 横向滚动隐藏滚动条 */
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .font-serif { font-family: var(--font-serif); }
+  </style>
+
+  <!-- 图片兜底 -->
+  <script>
+    document.addEventListener('error', function (e) {
+      const img = e.target;
+      if (img.tagName !== 'IMG' || img.dataset.fallback) return;
+      img.dataset.fallback = '1';
+      const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const cat = img.getAttribute('data-category') || '其他';
+      const alt = img.getAttribute('alt') || '';
+      const label = esc(alt.length > 8 ? alt.slice(0, 8) + '…' : alt);
+      const icons = { '人物': '👤', '自然风景': '🏞', '动物': '🐾', '建筑城市': '🏙', '运动体育': '⚽', '交通工具': '🚗', '食物': '🍽', '服饰时尚': '👗', '商业科技': '💼', '游戏娱乐': '🎮', '艺术': '🎨', '其他': '🖼' };
+      const icon = icons[cat] || '🖼';
+      const w = img.width || 400, h = img.height || 300;
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}"><rect width="100%" height="100%" fill="%23f3f4f6"/><text x="50%" y="45%" text-anchor="middle" font-size="${Math.min(w, h) * 0.18}" dominant-baseline="central">${icon}</text><text x="50%" y="68%" text-anchor="middle" font-size="${Math.min(w, h) * 0.07}" fill="%239ca3af" font-family="system-ui,sans-serif" dominant-baseline="central">${label}</text></svg>`;
+      img.src = 'data:image/svg+xml,' + svg;
+    }, true);
+  </script>
+</head>
+
+<body class="bg-background text-on-surface font-sans">
+
+  <!-- @nav:start 导航组件 -->
+  <header class="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30">
+    <div class="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
+      <a href="home.html" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+          <i data-lucide="music" class="w-4 h-4 text-primary-deep"></i>
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="font-serif text-lg font-semibold text-on-surface">艺演助手</span>
+          <span class="text-[10px] text-on-surface-variant tracking-wider">STAGEOS · 舞台演出智能规划</span>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-1">
+        <a href="home.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">首页</a>
+        <a href="costume.html" class="px-3.5 py-2 text-sm font-medium text-primary bg-primary/10 rounded-md transition-colors" aria-current="page">智能选款</a>
+        <a href="color.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">配色方案</a>
+        <a href="formation.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">队形预览</a>
+        <a href="about.html" class="px-3.5 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 rounded-md transition-colors">关于我们</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <a href="costume.html" class="bg-primary text-on-primary px-4 py-2 rounded-md text-sm font-medium hover:opacity-90 transition-opacity shadow-sm">
+          立即体验
+        </a>
+      </div>
+    </div>
+  </header>
+  <!-- @nav:end 导航组件 -->
+
+  <main class="max-w-7xl mx-auto">
+    <!-- @main-content:start -->
+
+    <!-- 顶部步骤条 -->
+    <div class="px-6 pt-10 pb-6">
+      <div class="flex items-center justify-between max-w-3xl mx-auto">
+        <!-- Step 1 已完成 -->
+        <div class="flex items-center gap-3 cursor-pointer group" id="step-item-1">
+          <div class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm shrink-0">
+            <i data-lucide="check" class="w-4 h-4"></i>
+          </div>
+          <div class="hidden sm:block">
+            <div class="text-sm font-semibold text-on-surface">节目信息</div>
+            <div class="text-xs text-on-surface-variant">Step 1</div>
+          </div>
+        </div>
+        <!-- 连接线 1 -->
+        <div class="flex-1 h-0.5 bg-primary mx-2 mx-3 mx-4"></div>
+        <!-- Step 2 已完成 -->
+        <div class="flex items-center gap-3 cursor-pointer group" id="step-item-2">
+          <div class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm shrink-0">
+            <i data-lucide="check" class="w-4 h-4"></i>
+          </div>
+          <div class="hidden sm:block">
+            <div class="text-sm font-semibold text-on-surface">学生信息</div>
+            <div class="text-xs text-on-surface-variant">Step 2</div>
+          </div>
+        </div>
+        <!-- 连接线 2 -->
+        <div class="flex-1 h-0.5 bg-primary mx-4"></div>
+        <!-- Step 3 已完成 -->
+        <div class="flex items-center gap-3 cursor-pointer group" id="step-item-3">
+          <div class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm shrink-0">
+            <i data-lucide="check" class="w-4 h-4"></i>
+          </div>
+          <div class="hidden sm:block">
+            <div class="text-sm font-semibold text-on-surface">舞台环境</div>
+            <div class="text-xs text-on-surface-variant">Step 3</div>
+          </div>
+        </div>
+        <!-- 连接线 3 -->
+        <div class="flex-1 h-0.5 bg-primary mx-4"></div>
+        <!-- Step 4 当前步骤 -->
+        <div class="flex items-center gap-3" id="step-item-4">
+          <div class="w-9 h-9 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm shrink-0 ring-4 ring-primary/20">
+            <span class="text-sm font-bold">4</span>
+          </div>
+          <div class="hidden sm:block">
+            <div class="text-sm font-semibold text-primary-deep">预算偏好</div>
+            <div class="text-xs text-on-surface-variant">Step 4</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 方案展示状态（默认展示） -->
+    <div id="result-view" class="px-6 pb-32">
+
+      <!-- 方案标题区 -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-xs text-primary-deep font-medium mb-4">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          AI 智能生成
+        </div>
+        <h1 class="font-serif text-3xl md:text-4xl font-bold text-on-surface mb-3">
+          为「春日合唱节」生成的 3 套方案
+        </h1>
+        <div class="flex items-center justify-center gap-2 flex-wrap">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface-container rounded-full text-xs text-on-surface-variant">
+            <i data-lucide="users" class="w-3 h-3"></i>45 人
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface-container rounded-full text-xs text-on-surface-variant">
+            <i data-lucide="graduation-cap" class="w-3 h-3"></i>3-5 年级
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface-container rounded-full text-xs text-on-surface-variant">
+            <i data-lucide="trophy" class="w-3 h-3"></i>校级比赛
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-surface-container rounded-full text-xs text-on-surface-variant">
+            <i data-lucide="music-2" class="w-3 h-3"></i>合唱
+          </span>
+        </div>
+      </div>
+
+      <!-- 主推荐卡 -->
+      <div class="bg-surface rounded-2xl shadow-float overflow-hidden mb-8 relative">
+        <!-- 水彩晕染装饰条 -->
+        <div class="absolute top-0 left-0 right-0 h-1.5 watercolor-bg"></div>
+        <!-- 主推荐徽章 -->
+        <div class="absolute top-5 left-5 z-10">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-primary text-on-primary rounded-full text-xs font-semibold shadow-md">
+            <i data-lucide="crown" class="w-3.5 h-3.5"></i>
+            主推荐方案
+          </span>
+        </div>
+        <div class="flex flex-col lg:flex-row">
+          <!-- 左侧：服装效果图 -->
+          <div class="lg:w-[45%] p-6 pb-0 lg:p-8 lg:pb-8">
+            <div class="aspect-[3/4] w-full rounded-xl costume-visual-bg flex items-center justify-center relative overflow-hidden">
+              <div class="text-center">
+                <i data-lucide="shirt" class="w-20 h-20 text-primary-deep/40 mx-auto mb-3"></i>
+                <p class="font-serif text-xl text-primary-deep/60">服装效果图</p>
+                <p class="text-xs text-on-surface-variant/60 mt-1">春野清歌 · 合唱礼服</p>
+              </div>
+              <!-- 水彩装饰斑 -->
+              <div class="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-primary-soft/20 blur-2xl"></div>
+              <div class="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-accent-soft/30 blur-2xl"></div>
+            </div>
+          </div>
+          <!-- 右侧：款式详情 -->
+          <div class="lg:w-[55%] p-6 lg:p-8 lg:pl-4 flex flex-col">
+            <div class="mb-4">
+              <h2 class="font-serif text-2xl md:text-3xl font-bold text-on-surface mb-1">春野清歌</h2>
+              <p class="text-sm text-on-surface-variant">薄荷青灰 × 米白 · 少儿合唱礼服</p>
+            </div>
+
+            <!-- 价格与身高 -->
+            <div class="flex items-center gap-6 mb-5">
+              <div>
+                <div class="text-xs text-on-surface-variant mb-1">价格区间</div>
+                <div class="text-lg font-bold text-primary-deep">¥ 268 - 318</div>
+              </div>
+              <div class="w-px h-10 bg-outline-variant/40"></div>
+              <div>
+                <div class="text-xs text-on-surface-variant mb-1">适合身高</div>
+                <div class="text-lg font-bold text-on-surface">120 - 160 cm</div>
+              </div>
+            </div>
+
+            <!-- 推荐理由 -->
+            <div class="mb-5">
+              <div class="text-sm font-semibold text-on-surface mb-2.5 flex items-center gap-2">
+                <i data-lucide="thumbs-up" class="w-4 h-4 text-primary"></i>
+                推荐理由
+              </div>
+              <ul class="space-y-2">
+                <li class="flex gap-2.5 text-sm text-on-surface">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+                  <span>薄荷青灰主色与春日主题高度契合，舞台呈现清新雅致</span>
+                </li>
+                <li class="flex gap-2.5 text-sm text-on-surface">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+                  <span>白衬衫 + 马甲分层设计，适应不同温度的演出场地</span>
+                </li>
+                <li class="flex gap-2.5 text-sm text-on-surface">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-success shrink-0 mt-0.5"></i>
+                  <span>A 字裙版型修饰身形，45 人齐唱时视觉统一度高</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- 标签组 -->
+            <div class="mb-5">
+              <div class="text-xs font-semibold text-on-surface-variant mb-2">尺码覆盖</div>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="px-2.5 py-1 bg-primary-container/60 text-primary-deep text-xs rounded-md font-medium">120 全码</span>
+                <span class="px-2.5 py-1 bg-primary-container/60 text-primary-deep text-xs rounded-md font-medium">130 全码</span>
+                <span class="px-2.5 py-1 bg-primary-container/60 text-primary-deep text-xs rounded-md font-medium">140 全码</span>
+                <span class="px-2.5 py-1 bg-primary-container/60 text-primary-deep text-xs rounded-md font-medium">150 全码</span>
+                <span class="px-2.5 py-1 bg-primary-container/60 text-primary-deep text-xs rounded-md font-medium">160 全码</span>
+              </div>
+            </div>
+
+            <!-- 自检标签 -->
+            <div class="flex flex-wrap gap-2 mb-6">
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-success/10 text-success text-xs rounded-md font-medium">
+                <i data-lucide="palette" class="w-3 h-3"></i>背景不撞色
+              </span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-success/10 text-success text-xs rounded-md font-medium">
+                <i data-lucide="shield-check" class="w-3 h-3"></i>Plan B 已备
+              </span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-success/10 text-success text-xs rounded-md font-medium">
+                <i data-lucide="clock" class="w-3 h-3"></i>演出时效达标
+              </span>
+              <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-success/10 text-success text-xs rounded-md font-medium">
+                <i data-lucide="ruler" class="w-3 h-3"></i>尺码全覆盖
+              </span>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="flex items-center gap-3 mt-auto">
+              <button id="btn-favorite-main" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors">
+                <i data-lucide="heart" class="w-4 h-4 text-on-surface-variant"></i>
+              </button>
+              <button id="btn-refresh-main" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors">
+                <i data-lucide="refresh-cw" class="w-4 h-4 text-on-surface-variant"></i>
+              </button>
+              <button id="btn-export-main" class="ml-auto bg-primary text-on-primary px-5 py-2.5 rounded-md text-sm font-medium hover:opacity-90 transition-opacity inline-flex items-center gap-2 shadow-sm">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                导出方案
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 备选方案区 -->
+      <div class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-serif text-xl font-semibold text-on-surface">备选方案</h3>
+          <span class="text-xs text-on-surface-variant">点击「设为主方案」可切换推荐</span>
+        </div>
+        <div class="grid md:grid-cols-2 gap-5">
+          <!-- 备选方案 1 -->
+          <div class="bg-surface rounded-xl shadow-card overflow-hidden hover:shadow-float transition-shadow">
+            <div class="flex flex-col sm:flex-row">
+              <div class="sm:w-2/5 p-4 pb-0 sm:p-4">
+                <div class="aspect-[3/4] w-full rounded-lg costume-visual-bg-alt-1 flex items-center justify-center relative overflow-hidden">
+                  <div class="text-center">
+                    <i data-lucide="shirt" class="w-12 h-12 text-rose/40 mx-auto mb-2"></i>
+                    <p class="text-sm font-serif text-rose/60">服装效果图</p>
+                  </div>
+                </div>
+              </div>
+              <div class="sm:w-3/5 p-4 sm:p-5 flex flex-col">
+                <h4 class="font-serif text-lg font-bold text-on-surface mb-0.5">樱落霞衣</h4>
+                <p class="text-xs text-on-surface-variant mb-3">豆沙粉 × 米白 · 甜美风格</p>
+                <p class="text-xs text-on-surface mb-3 flex items-start gap-1.5">
+                  <i data-lucide="info" class="w-3.5 h-3.5 text-accent shrink-0 mt-0.5"></i>
+                  <span>更适合女声主导的曲目，视觉上更具灵动性</span>
+                </p>
+                <div class="text-sm font-bold text-primary-deep mb-4">¥ 248 - 298</div>
+                <div class="mt-auto flex items-center gap-2">
+                  <button class="alt-set-main flex-1 py-2 bg-surface-container text-on-surface text-sm font-medium rounded-md hover:bg-surface-container-high transition-colors" data-id="alt-1">
+                    设为主方案
+                  </button>
+                  <button class="alt-favorite w-9 h-9 rounded-md bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="alt-1">
+                    <i data-lucide="heart" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- 备选方案 2 -->
+          <div class="bg-surface rounded-xl shadow-card overflow-hidden hover:shadow-float transition-shadow">
+            <div class="flex flex-col sm:flex-row">
+              <div class="sm:w-2/5 p-4 pb-0 sm:p-4">
+                <div class="aspect-[3/4] w-full rounded-lg costume-visual-bg-alt-2 flex items-center justify-center relative overflow-hidden">
+                  <div class="text-center">
+                    <i data-lucide="shirt" class="w-12 h-12 text-indigo/40 mx-auto mb-2"></i>
+                    <p class="text-sm font-serif text-indigo/60">服装效果图</p>
+                  </div>
+                </div>
+              </div>
+              <div class="sm:w-3/5 p-4 sm:p-5 flex flex-col">
+                <h4 class="font-serif text-lg font-bold text-on-surface mb-0.5">青衿雅韵</h4>
+                <p class="text-xs text-on-surface-variant mb-3">灰蓝 × 米白 · 学院风格</p>
+                <p class="text-xs text-on-surface mb-3 flex items-start gap-1.5">
+                  <i data-lucide="info" class="w-3.5 h-3.5 text-accent shrink-0 mt-0.5"></i>
+                  <span>更正式庄重，适合古典诗词或红色主题曲目</span>
+                </p>
+                <div class="text-sm font-bold text-primary-deep mb-4">¥ 238 - 288</div>
+                <div class="mt-auto flex items-center gap-2">
+                  <button class="alt-set-main flex-1 py-2 bg-surface-container text-on-surface text-sm font-medium rounded-md hover:bg-surface-container-high transition-colors" data-id="alt-2">
+                    设为主方案
+                  </button>
+                  <button class="alt-favorite w-9 h-9 rounded-md bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors" data-id="alt-2">
+                    <i data-lucide="heart" class="w-3.5 h-3.5 text-on-surface-variant"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 配饰建议区 -->
+      <div class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-serif text-xl font-semibold text-on-surface flex items-center gap-2">
+            <i data-lucide="gem" class="w-5 h-5 text-accent"></i>
+            配饰建议
+          </h3>
+          <span class="text-xs text-on-surface-variant">AI 匹配 · 与主方案风格统一</span>
+        </div>
+        <div class="flex gap-4 overflow-x-auto hide-scrollbar pb-2 -mx-6 px-6">
+          <!-- 配饰-鞋子 -->
+          <div class="shrink-0 w-44 bg-surface rounded-xl shadow-card overflow-hidden">
+            <div class="h-32 bg-surface-container/50 flex items-center justify-center relative">
+              <i data-lucide="footprints" class="w-10 h-10 text-primary-deep/30"></i>
+              <div class="absolute top-2 right-2">
+                <span class="text-[10px] px-2 py-0.5 bg-primary/10 text-primary-deep rounded-full font-medium">推荐</span>
+              </div>
+            </div>
+            <div class="p-3">
+              <div class="text-sm font-semibold text-on-surface mb-0.5">小皮鞋</div>
+              <div class="text-xs text-on-surface-variant mb-2">哑光黑 / 哑光米白</div>
+              <div class="text-sm font-bold text-primary-deep">¥ 68 - 88</div>
+            </div>
+          </div>
+          <!-- 配饰-领结 -->
+          <div class="shrink-0 w-44 bg-surface rounded-xl shadow-card overflow-hidden">
+            <div class="h-32 bg-surface-container/50 flex items-center justify-center">
+              <i data-lucide="ribbon" class="w-10 h-10 text-rose/30"></i>
+            </div>
+            <div class="p-3">
+              <div class="text-sm font-semibold text-on-surface mb-0.5">蝴蝶结领饰</div>
+              <div class="text-xs text-on-surface-variant mb-2">薄荷青灰 · 同色系</div>
+              <div class="text-sm font-bold text-primary-deep">¥ 12</div>
+            </div>
+          </div>
+          <!-- 配饰-头饰 -->
+          <div class="shrink-0 w-44 bg-surface rounded-xl shadow-card overflow-hidden">
+            <div class="h-32 bg-surface-container/50 flex items-center justify-center">
+              <i data-lucide="crown" class="w-10 h-10 text-accent/40"></i>
+            </div>
+            <div class="p-3">
+              <div class="text-sm font-semibold text-on-surface mb-0.5">水钻发箍</div>
+              <div class="text-xs text-on-surface-variant mb-2">银色细款 · 不抢镜</div>
+              <div class="text-sm font-bold text-primary-deep">¥ 18</div>
+            </div>
+          </div>
+          <!-- 配饰-袜子 -->
+          <div class="shrink-0 w-44 bg-surface rounded-xl shadow-card overflow-hidden">
+            <div class="h-32 bg-surface-container/50 flex items-center justify-center">
+              <i data-lucide="waves" class="w-10 h-10 text-indigo/30"></i>
+            </div>
+            <div class="p-3">
+              <div class="text-sm font-semibold text-on-surface mb-0.5">中筒袜</div>
+              <div class="text-xs text-on-surface-variant mb-2">白色棉袜 · 蕾丝边款</div>
+              <div class="text-sm font-bold text-primary-deep">¥ 15</div>
+            </div>
+          </div>
+          <!-- 配饰-道具花 -->
+          <div class="shrink-0 w-44 bg-surface rounded-xl shadow-card overflow-hidden">
+            <div class="h-32 bg-surface-container/50 flex items-center justify-center">
+              <i data-lucide="flower-2" class="w-10 h-10 text-rose/30"></i>
+            </div>
+            <div class="p-3">
+              <div class="text-sm font-semibold text-on-surface mb-0.5">手捧花</div>
+              <div class="text-xs text-on-surface-variant mb-2">白色雏菊 · 仿真花</div>
+              <div class="text-sm font-bold text-primary-deep">¥ 8 / 支</div>
+            </div>
+          </div>
+          <!-- 配饰-手套 -->
+          <div class="shrink-0 w-44 bg-surface rounded-xl shadow-card overflow-hidden">
+            <div class="h-32 bg-surface-container/50 flex items-center justify-center">
+              <i data-lucide="hand" class="w-10 h-10 text-primary-deep/30"></i>
+            </div>
+            <div class="p-3">
+              <div class="text-sm font-semibold text-on-surface mb-0.5">礼仪手套</div>
+              <div class="text-xs text-on-surface-variant mb-2">白色短款 · 弹力缎面</div>
+              <div class="text-sm font-bold text-primary-deep">¥ 12</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 尺码指南区 -->
+      <div class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-serif text-xl font-semibold text-on-surface flex items-center gap-2">
+            <i data-lucide="ruler" class="w-5 h-5 text-primary"></i>
+            尺码指南
+          </h3>
+          <span class="text-xs text-on-surface-variant">建议按身高 + 5cm 选码</span>
+        </div>
+        <div class="bg-surface rounded-xl shadow-card overflow-hidden">
+          <div class="grid grid-cols-5 px-5 py-3 bg-surface-container text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
+            <span>尺码</span>
+            <span>身高 (cm)</span>
+            <span>体重 (kg)</span>
+            <span>建议人数</span>
+            <span>占比</span>
+          </div>
+          <div class="divide-y divide-outline-variant/30">
+            <!-- 尺码行-120 -->
+            <div class="grid grid-cols-5 px-5 py-3 hover:bg-surface-container/30 transition-colors items-center">
+              <span class="text-sm font-semibold text-on-surface">120</span>
+              <span class="text-sm text-on-surface-variant">115 - 125</span>
+              <span class="text-sm text-on-surface-variant">18 - 22</span>
+              <span class="text-sm text-on-surface">6 人</span>
+              <div class="flex items-center gap-2">
+                <div class="flex-1 h-1.5 bg-surface-container rounded-full overflow-hidden max-w-[80px]">
+                  <div class="h-full bg-primary-soft rounded-full" style="width: 40%"></div>
+                </div>
+                <span class="text-xs text-on-surface-variant">13%</span>
+              </div>
+            </div>
+            <!-- 尺码行-130 -->
+            <div class="grid grid-cols-5 px-5 py-3 hover:bg-surface-container/30 transition-colors items-center">
+              <span class="text-sm font-semibold text-on-surface">130</span>
+              <span class="text-sm text-on-surface-variant">125 - 135</span>
+              <span class="text-sm text-on-surface-variant">22 - 28</span>
+              <span class="text-sm text-on-surface">12 人</span>
+              <div class="flex items-center gap-2">
+                <div class="flex-1 h-1.5 bg-surface-container rounded-full overflow-hidden max-w-[80px]">
+                  <div class="h-full bg-primary rounded-full" style="width: 80%"></div>
+                </div>
+                <span class="text-xs text-on-surface-variant">27%</span>
+              </div>
+            </div>
+            <!-- 尺码行-140 -->
+            <div class="grid grid-cols-5 px-5 py-3 hover:bg-surface-container/30 transition-colors items-center">
+              <span class="text-sm font-semibold text-on-surface">140</span>
+              <span class="text-sm text-on-surface-variant">135 - 145</span>
+              <span class="text-sm text-on-surface-variant">28 - 35</span>
+              <span class="text-sm text-on-surface">15 人</span>
+              <div class="flex items-center gap-2">
+                <div class="flex-1 h-1.5 bg-surface-container rounded-full overflow-hidden max-w-[80px]">
+                  <div class="h-full bg-primary rounded-full" style="width: 100%"></div>
+                </div>
+                <span class="text-xs text-on-surface-variant">33%</span>
+              </div>
+            </div>
+            <!-- 尺码行-150 -->
+            <div class="grid grid-cols-5 px-5 py-3 hover:bg-surface-container/30 transition-colors items-center">
+              <span class="text-sm font-semibold text-on-surface">150</span>
+              <span class="text-sm text-on-surface-variant">145 - 155</span>
+              <span class="text-sm text-on-surface-variant">35 - 42</span>
+              <span class="text-sm text-on-surface">9 人</span>
+              <div class="flex items-center gap-2">
+                <div class="flex-1 h-1.5 bg-surface-container rounded-full overflow-hidden max-w-[80px]">
+                  <div class="h-full bg-primary-soft rounded-full" style="width: 60%"></div>
+                </div>
+                <span class="text-xs text-on-surface-variant">20%</span>
+              </div>
+            </div>
+            <!-- 尺码行-160 -->
+            <div class="grid grid-cols-5 px-5 py-3 hover:bg-surface-container/30 transition-colors items-center">
+              <span class="text-sm font-semibold text-on-surface">160</span>
+              <span class="text-sm text-on-surface-variant">155 - 165</span>
+              <span class="text-sm text-on-surface-variant">42 - 50</span>
+              <span class="text-sm text-on-surface">3 人</span>
+              <div class="flex items-center gap-2">
+                <div class="flex-1 h-1.5 bg-surface-container rounded-full overflow-hidden max-w-[80px]">
+                  <div class="h-full bg-primary-soft/60 rounded-full" style="width: 20%"></div>
+                </div>
+                <span class="text-xs text-on-surface-variant">7%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 执行清单时间线 -->
+      <div class="mb-10">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-serif text-xl font-semibold text-on-surface flex items-center gap-2">
+            <i data-lucide="calendar-check" class="w-5 h-5 text-primary"></i>
+            执行清单
+          </h3>
+          <span class="text-xs text-on-surface-variant">距离演出还有 <span class="text-primary-deep font-semibold">28 天</span></span>
+        </div>
+        <div class="bg-surface rounded-xl shadow-card p-6">
+          <div class="relative">
+            <!-- 时间线连接线 -->
+            <div class="absolute top-5 left-5 right-5 h-0.5 bg-surface-container-highest"></div>
+            <div class="flex justify-between relative">
+              <!-- 时间节点-确认下单 -->
+              <div class="flex flex-col items-center w-[18%]">
+                <div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm z-10 mb-3">
+                  <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                </div>
+                <div class="text-sm font-semibold text-on-surface text-center">确认下单</div>
+                <div class="text-xs text-on-surface-variant mt-1">今日 · Day 0</div>
+              </div>
+              <!-- 时间节点-生产发货 -->
+              <div class="flex flex-col items-center w-[18%]">
+                <div class="w-10 h-10 rounded-full bg-primary/80 text-on-primary flex items-center justify-center shadow-sm z-10 mb-3">
+                  <i data-lucide="package" class="w-5 h-5"></i>
+                </div>
+                <div class="text-sm font-semibold text-on-surface text-center">生产发货</div>
+                <div class="text-xs text-on-surface-variant mt-1">Day 3 - 10</div>
+              </div>
+              <!-- 时间节点-试装 -->
+              <div class="flex flex-col items-center w-[18%]">
+                <div class="w-10 h-10 rounded-full bg-primary-soft text-on-primary flex items-center justify-center shadow-sm z-10 mb-3">
+                  <i data-lucide="shirt" class="w-5 h-5"></i>
+                </div>
+                <div class="text-sm font-semibold text-on-surface text-center">全员试装</div>
+                <div class="text-xs text-on-surface-variant mt-1">Day 12 - 14</div>
+              </div>
+              <!-- 时间节点-调整返修 -->
+              <div class="flex flex-col items-center w-[18%]">
+                <div class="w-10 h-10 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center z-10 mb-3">
+                  <i data-lucide="scissors" class="w-5 h-5"></i>
+                </div>
+                <div class="text-sm font-medium text-on-surface-variant text-center">调整返修</div>
+                <div class="text-xs text-on-surface-soft mt-1">Day 15 - 20</div>
+              </div>
+              <!-- 时间节点-登台彩排 -->
+              <div class="flex flex-col items-center w-[18%]">
+                <div class="w-10 h-10 rounded-full bg-surface-container text-on-surface-variant flex items-center justify-center z-10 mb-3">
+                  <i data-lucide="spotlight" class="w-5 h-5"></i>
+                </div>
+                <div class="text-sm font-medium text-on-surface-variant text-center">登台彩排</div>
+                <div class="text-xs text-on-surface-soft mt-1">Day 25 - 27</div>
+              </div>
+            </div>
+          </div>
+          <!-- 关键提醒 -->
+          <div class="mt-6 pt-5 border-t border-outline-variant/20 flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-warning/10 flex items-center justify-center shrink-0">
+              <i data-lucide="alert-circle" class="w-4 h-4 text-warning"></i>
+            </div>
+            <div class="flex-1">
+              <div class="text-sm font-semibold text-on-surface mb-0.5">关键提醒</div>
+              <p class="text-xs text-on-surface-variant leading-relaxed">
+                建议在演出前 14 天完成首次试装，预留充足的返修和调码时间。如需加急生产请联系客服，最快 5 天出货。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /方案展示状态 -->
+
+    <!-- 表单输入状态（默认隐藏，点击调整参数后显示） -->
+    <div id="form-view" class="px-6 pb-32 hidden">
+
+      <!-- 当前步骤标题 -->
+      <div class="max-w-3xl mx-auto mb-8">
+        <h1 class="font-serif text-2xl md:text-3xl font-bold text-on-surface mb-2">Step 1 · 节目信息</h1>
+        <p class="text-sm text-on-surface-variant">告诉我们关于这场演出的基本信息，AI 将为你精准匹配服装方案</p>
+      </div>
+
+      <!-- 表单区 -->
+      <div class="max-w-3xl mx-auto bg-surface rounded-2xl shadow-card p-6 md:p-8">
+
+        <!-- 节目类型 -->
+        <div class="mb-7">
+          <label class="block text-sm font-semibold text-on-surface mb-3">节目类型 <span class="text-error">*</span></label>
+          <div class="grid grid-cols-3 md:grid-cols-4 gap-3" id="program-type-grid">
+            <!-- 类型卡-合唱 -->
+            <div class="program-type-card cursor-pointer p-4 rounded-xl border-2 border-primary bg-primary/5 transition-all" data-type="chorus">
+              <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                <i data-lucide="music-2" class="w-5 h-5 text-primary-deep"></i>
+              </div>
+              <div class="text-sm font-semibold text-on-surface">合唱</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">齐唱 / 混声</div>
+            </div>
+            <!-- 类型卡-群舞 -->
+            <div class="program-type-card cursor-pointer p-4 rounded-xl border-2 border-transparent bg-surface-container/50 hover:bg-surface-container transition-all" data-type="dance">
+              <div class="w-10 h-10 rounded-lg bg-rose/10 flex items-center justify-center mb-3">
+                <i data-lucide="dancer" class="w-5 h-5 text-rose"></i>
+              </div>
+              <div class="text-sm font-medium text-on-surface">群舞</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">民族 / 现代</div>
+            </div>
+            <!-- 类型卡-独奏 -->
+            <div class="program-type-card cursor-pointer p-4 rounded-xl border-2 border-transparent bg-surface-container/50 hover:bg-surface-container transition-all" data-type="solo">
+              <div class="w-10 h-10 rounded-lg bg-indigo/10 flex items-center justify-center mb-3">
+                <i data-lucide="piano" class="w-5 h-5 text-indigo"></i>
+              </div>
+              <div class="text-sm font-medium text-on-surface">独奏</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">钢琴 / 弦乐</div>
+            </div>
+            <!-- 类型卡-朗诵 -->
+            <div class="program-type-card cursor-pointer p-4 rounded-xl border-2 border-transparent bg-surface-container/50 hover:bg-surface-container transition-all" data-type="recite">
+              <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center mb-3">
+                <i data-lucide="mic" class="w-5 h-5 text-accent"></i>
+              </div>
+              <div class="text-sm font-medium text-on-surface">朗诵</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">诗歌 / 散文</div>
+            </div>
+            <!-- 类型卡-戏曲 -->
+            <div class="program-type-card cursor-pointer p-4 rounded-xl border-2 border-transparent bg-surface-container/50 hover:bg-surface-container transition-all" data-type="opera">
+              <div class="w-10 h-10 rounded-lg bg-rose/10 flex items-center justify-center mb-3">
+                <i data-lucide="theater" class="w-5 h-5 text-rose"></i>
+              </div>
+              <div class="text-sm font-medium text-on-surface">戏曲</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">京剧 / 越剧</div>
+            </div>
+            <!-- 类型卡-民乐合奏 -->
+            <div class="program-type-card cursor-pointer p-4 rounded-xl border-2 border-transparent bg-surface-container/50 hover:bg-surface-container transition-all" data-type="ensemble">
+              <div class="w-10 h-10 rounded-lg bg-indigo/10 flex items-center justify-center mb-3">
+                <i data-lucide="guitar" class="w-5 h-5 text-indigo"></i>
+              </div>
+              <div class="text-sm font-medium text-on-surface">民乐合奏</div>
+              <div class="text-xs text-on-surface-variant mt-0.5">古筝 / 二胡</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 节目主题 -->
+        <div class="mb-7">
+          <label class="block text-sm font-semibold text-on-surface mb-2">节目主题 <span class="text-error">*</span></label>
+          <input type="text" id="input-program-theme" value="春天的故事"
+                 class="w-full bg-surface-container border-none rounded-md px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-2 focus:ring-primary/30 transition-colors"/>
+          <p class="text-xs text-on-surface-variant mt-1.5">输入节目名称或主题关键词，如"春天的故事"、"红色记忆"</p>
+        </div>
+
+        <!-- 演出级别 -->
+        <div class="mb-7">
+          <label class="block text-sm font-semibold text-on-surface mb-3">演出级别 <span class="text-error">*</span></label>
+          <div class="flex flex-wrap gap-2" id="level-radio-group">
+            <label class="cursor-pointer">
+              <input type="radio" name="level" value="school" class="peer hidden"/>
+              <span class="inline-flex items-center px-4 py-2 rounded-md bg-surface-container text-sm text-on-surface-variant font-medium peer-checked:bg-primary peer-checked:text-on-primary transition-colors">
+                校级
+              </span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="level" value="district" class="peer hidden" checked/>
+              <span class="inline-flex items-center px-4 py-2 rounded-md bg-surface-container text-sm text-on-surface-variant font-medium peer-checked:bg-primary peer-checked:text-on-primary transition-colors">
+                区级
+              </span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="level" value="city" class="peer hidden"/>
+              <span class="inline-flex items-center px-4 py-2 rounded-md bg-surface-container text-sm text-on-surface-variant font-medium peer-checked:bg-primary peer-checked:text-on-primary transition-colors">
+                市级
+              </span>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="level" value="province" class="peer hidden"/>
+              <span class="inline-flex items-center px-4 py-2 rounded-md bg-surface-container text-sm text-on-surface-variant font-medium peer-checked:bg-primary peer-checked:text-on-primary transition-colors">
+                省级
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 参演人数 + 男女比例 -->
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-on-surface mb-3">参演人数 & 男女比例 <span class="text-error">*</span></label>
+          <div class="grid md:grid-cols-2 gap-6">
+            <!-- 人数输入 -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-on-surface-variant">总人数</span>
+                <span class="text-lg font-bold text-primary-deep" id="people-count-display">45 人</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <button id="btn-people-minus" class="w-9 h-9 rounded-md bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors">
+                  <i data-lucide="minus" class="w-4 h-4 text-on-surface-variant"></i>
+                </button>
+                <input type="number" id="input-people-count" value="45" min="1" max="200"
+                       class="flex-1 bg-surface-container border-none rounded-md px-3 py-2 text-center text-sm font-semibold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/30"/>
+                <button id="btn-people-plus" class="w-9 h-9 rounded-md bg-surface-container flex items-center justify-center hover:bg-surface-container-high transition-colors">
+                  <i data-lucide="plus" class="w-4 h-4 text-on-surface-variant"></i>
+                </button>
+              </div>
+            </div>
+            <!-- 男女比例滑块 -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm text-on-surface-variant">男女比例</span>
+                <span class="text-sm font-semibold text-on-surface">
+                  <span class="text-indigo">男 20</span> · <span class="text-rose">女 25</span>
+                </span>
+              </div>
+              <input type="range" id="slider-gender-ratio" min="0" max="100" value="44"
+                     class="w-full accent-primary cursor-pointer"/>
+              <div class="flex justify-between text-xs text-on-surface-soft mt-1.5">
+                <span>全男</span>
+                <span>对半</span>
+                <span>全女</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+    <!-- /表单输入状态 -->
+
+    <!-- @main-content:end -->
+  </main>
+
+  <!-- 底部操作栏（sticky） -->
+  <div id="bottom-action-bar" class="fixed bottom-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur-md border-t border-outline-variant/30">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="hidden sm:block">
+          <div class="text-xs text-on-surface-variant mb-1">完成进度</div>
+          <div class="flex items-center gap-2">
+            <div class="w-32 h-1.5 bg-surface-container rounded-full overflow-hidden">
+              <div class="h-full bg-primary rounded-full transition-all" id="progress-bar" style="width: 100%"></div>
+            </div>
+            <span class="text-xs font-semibold text-primary-deep" id="progress-text">100%</span>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 ml-auto">
+        <button id="btn-back-form" class="bg-surface-container text-on-surface px-5 py-2.5 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all hidden">
+          上一步
+        </button>
+        <button id="btn-adjust-params" class="bg-surface-container text-on-surface px-5 py-2.5 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
+          <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+          调整参数
+        </button>
+        <button id="btn-save-plan" class="bg-surface-container text-on-surface px-5 py-2.5 rounded-md text-sm font-medium hover:bg-surface-container-high active:scale-[0.98] transition-all inline-flex items-center gap-2">
+          <i data-lucide="bookmark" class="w-4 h-4"></i>
+          收藏方案
+        </button>
+        <button id="btn-export-plan" class="bg-primary text-on-primary px-6 py-2.5 rounded-md text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all inline-flex items-center gap-2 shadow-sm">
+          <i data-lucide="download" class="w-4 h-4"></i>
+          导出方案
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导出弹窗 -->
+  <div id="export-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-surface rounded-xl shadow-dialog max-w-md w-full p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h3 class="font-serif text-lg font-bold text-on-surface">导出方案</h3>
+        <button id="btn-close-export" class="w-8 h-8 rounded-md hover:bg-surface-container flex items-center justify-center transition-colors">
+          <i data-lucide="x" class="w-4 h-4 text-on-surface-variant"></i>
+        </button>
+      </div>
+      <div class="space-y-2 mb-6">
+        <label class="flex items-center gap-3 p-3 rounded-lg border border-outline-variant/20 hover:bg-surface-container/50 cursor-pointer transition-colors">
+          <input type="radio" name="export-type" value="pdf" class="accent-primary" checked>
+          <div class="flex-1">
+            <div class="text-sm font-medium text-on-surface">PDF 报告</div>
+            <div class="text-xs text-on-surface-variant">完整方案文档，含效果图与清单</div>
+          </div>
+          <i data-lucide="file-text" class="w-5 h-5 text-primary"></i>
+        </label>
+        <label class="flex items-center gap-3 p-3 rounded-lg border border-outline-variant/20 hover:bg-surface-container/50 cursor-pointer transition-colors">
+          <input type="radio" name="export-type" value="json" class="accent-primary">
+          <div class="flex-1">
+            <div class="text-sm font-medium text-on-surface">JSON 数据</div>
+            <div class="text-xs text-on-surface-variant">结构化数据，便于二次开发</div>
+          </div>
+          <i data-lucide="braces" class="w-5 h-5 text-primary"></i>
+        </label>
+        <label class="flex items-center gap-3 p-3 rounded-lg border border-outline-variant/20 hover:bg-surface-container/50 cursor-pointer transition-colors">
+          <input type="radio" name="export-type" value="markdown" class="accent-primary">
+          <div class="flex-1">
+            <div class="text-sm font-medium text-on-surface">Markdown 清单</div>
+            <div class="text-xs text-on-surface-variant">采购清单 + 尺码表纯文本</div>
+          </div>
+          <i data-lucide="list" class="w-5 h-5 text-primary"></i>
+        </label>
+        <label class="flex items-center gap-3 p-3 rounded-lg border border-outline-variant/20 hover:bg-surface-container/50 cursor-pointer transition-colors">
+          <input type="radio" name="export-type" value="print" class="accent-primary">
+          <div class="flex-1">
+            <div class="text-sm font-medium text-on-surface">打印</div>
+            <div class="text-xs text-on-surface-variant">直接发送到打印机</div>
+          </div>
+          <i data-lucide="printer" class="w-5 h-5 text-primary"></i>
+        </label>
+      </div>
+      <div class="flex gap-3">
+        <button id="btn-cancel-export" class="flex-1 bg-surface-container text-on-surface py-2.5 rounded-md text-sm font-medium hover:bg-surface-container-high transition-colors">取消</button>
+        <button id="btn-confirm-export" class="flex-1 bg-primary text-on-primary py-2.5 rounded-md text-sm font-medium hover:opacity-90 transition-opacity">确认导出</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+  </script>
+
+  <script>
+    $(function() {
+
+      // 调整参数按钮 - 切换到表单视图
+      $('#btn-adjust-params').on('click', function() {
+        $('#result-view').addClass('hidden');
+        $('#form-view').removeClass('hidden');
+        // 更新底部操作栏
+        $('#btn-adjust-params').addClass('hidden');
+        $('#btn-save-plan').addClass('hidden');
+        $('#btn-export-plan').addClass('hidden');
+        $('#btn-back-form').removeClass('hidden').text('返回方案');
+        $('#progress-bar').css('width', '25%');
+        $('#progress-text').text('25%');
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // 表单视图中的"返回方案"按钮
+      $('#btn-back-form').on('click', function() {
+        if ($('#form-view').is(':visible')) {
+          // 返回方案视图
+          $('#result-view').removeClass('hidden');
+          $('#form-view').addClass('hidden');
+          $('#btn-adjust-params').removeClass('hidden');
+          $('#btn-save-plan').removeClass('hidden');
+          $('#btn-export-plan').removeClass('hidden');
+          $('#btn-back-form').addClass('hidden').text('上一步');
+          $('#progress-bar').css('width', '100%');
+          $('#progress-text').text('100%');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // 上一步
+          console.log('上一步操作');
+        }
+      });
+
+      // 节目类型卡片选择
+      $('.program-type-card').on('click', function() {
+        $('.program-type-card').removeClass('ring-2 ring-primary bg-primary/5');
+        $(this).addClass('ring-2 ring-primary bg-primary/5');
+      });
+
+      // 演出级别单选
+      $('.level-radio-item').on('click', function() {
+        $('.level-radio-item').removeClass('bg-primary/10 border-primary text-primary-deep');
+        $('.level-radio-circle').removeClass('bg-primary');
+        $(this).addClass('bg-primary/10 border-primary text-primary-deep');
+        $(this).find('.level-radio-circle').addClass('bg-primary');
+      });
+
+      // 收藏按钮切换
+      $('#btn-save-plan').on('click', function() {
+        const icon = $(this).find('svg');
+        const text = $(this).text().trim();
+        if (text === '收藏方案') {
+          $(this).html('<i data-lucide="bookmark-check" class="w-4 h-4"></i>已收藏');
+          $(this).addClass('text-primary-deep');
+        } else {
+          $(this).html('<i data-lucide="bookmark" class="w-4 h-4"></i>收藏方案');
+          $(this).removeClass('text-primary-deep');
+        }
+        lucide.createIcons();
+      });
+
+      // 备选方案设为主方案
+      $('.btn-set-as-main').on('click', function() {
+        console.log('设为主方案:', $(this).data('plan-id'));
+        // 完整实现步骤：
+        // 1. 获取当前备选方案的详细信息（款式名、价格、推荐理由、图片等）
+        // 2. 将主推荐卡内容与选中的备选方案内容互换
+        // 3. 原主方案变为备选方案，插入到备选区
+        // 4. 切换过程中添加淡入淡出过渡动画
+        // 5. 更新自检标签和尺码指南数据
+      });
+
+      // 导出方案按钮
+      $('#btn-export-plan').on('click', function() {
+        console.log('导出方案 - 需打开导出选项弹窗');
+        // 完整实现步骤：
+        // 1. 打开 export-options 模态框
+        // 2. 展示导出选项：PDF报告 / JSON数据 / Markdown清单 / 打印
+        // 3. 用户选择后点击确认，调用对应导出接口
+        // 4. 显示导出进度和完成提示
+      });
+
+      // 配饰卡片hover效果（已用CSS实现hover:shadow-float）
+      // 尺码指南表格行已用CSS实现hover效果
+
+    });
+  </script>
+
+</body>
+</html>
