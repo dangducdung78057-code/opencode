@@ -1,4 +1,19 @@
 {
+  "name": "stageos-engineering-system",
+  "private": true,
+  "version": "1.0.0",
+  "description": "StageOS integrated engineering system with independent deployable modules and shared contracts.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w apps/stageos-main",
+    "build": "npm run build -w apps/stageos-main",
+    "typecheck": "npm run typecheck -w apps/stageos-main",
+    "lint:structure": "node scripts/check-structure.mjs"
+  }
+}{
   "$schema": "https://json.schemastore.org/package.json",
   "name": "opencode",
   "description": "AI-powered development tool",
