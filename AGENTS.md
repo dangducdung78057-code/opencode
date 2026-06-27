@@ -1,3 +1,37 @@
+# AGENTS.md
+
+## 项目目标
+
+StageOS 艺演助手：中小学舞台演出方案生成、成案展示、一键同款、数字人预览、服装队形场景工作台。
+
+## 公开边界
+
+公开页面禁止展示：
+
+- RAG
+- 隐藏审美标签
+- 反面案例库原文
+- negative tag
+- Prompt 契约
+- 内部权重
+- 核心规则链路
+
+公开页面只展示：
+
+- 能力
+- 成案
+- 风格标签
+- 风险提示
+- 用户可操作流程
+
+## 工程原则
+
+- 所有 API 输入使用 Zod 或显式校验。
+- 所有用户项目必须绑定 userId。
+- 所有文件上传必须绑定 userId，可选绑定 projectId。
+- 数字人预览必须锁定人数、男女比例、序号和身高关系。
+- 图片/写实预览不能直接自由生成，必须从 renderContext 读取锁定约束。
+- 所有方案输出前必须经过 Negative Guard。
 - To regenerate the JavaScript SDK, run `./packages/sdk/js/script/build.ts`.
 - The default branch in this repo is `dev`.
 - Local `main` ref may not exist; use `dev` or `origin/dev` for diffs.
